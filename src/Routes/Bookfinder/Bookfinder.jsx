@@ -21,18 +21,22 @@ function Bookfinder() {
 		return (
 			<div className="home">
 				<h1>Book Finder</h1>
+				<div className="dropdown">
+					<button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Dropdown button
+					</button>
+					<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+						<a className="dropdown-item" href="#">Action</a>
+						<a className="dropdown-item" href="#">Another action</a>
+						<a className="dropdown-item" href="#">Something else here</a>
+					</div>
+				</div>
 
-				<h2>Here's a list of awesome features that you have!</h2>
 				<section className="book-comparison-top">
 					<div className="container-fluid">
 						<h2 className="section-title">Book Comparison Engine</h2>
-						<p>
-							This free service from the book marketing technology team at <a href="http://findmyaudience.com">FIND MY
-							AUDIENCE</a> will help you determine how your book stands in relation to comparable titles in the
-							competitive market for readers' attention.
-						</p>
 						<div className="book-search">
-							<p>If we don't have your book in our database, <a href="#">let us know</a>.</p>
 							<form className="book-title">
 								<div className="field-group">
 									<label htmlFor="user-book-title-top" className="visually-hidden">Enter your book title</label>
@@ -54,12 +58,12 @@ function Bookfinder() {
 								</div>
 								<div>
 									<span className="comp-score">92</span>
-									<a href="javascript:;" data-toggle="popover" title="What is Comp Score?"
+									<a href="#" data-toggle="popover" title="What is Comp Score?"
 										 data-content="Explaining the comp score..." data-trigger="focus">What is this number?</a>
 								</div>
 							</div>
 
-							<table className="book-comparison-table">
+							<table class="dataTable book-comparison-table">
 								<colgroup>
 												<col className="amazon"/>
 												<col span="2" className="goodreads"/>
