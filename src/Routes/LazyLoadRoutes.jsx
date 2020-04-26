@@ -19,6 +19,11 @@ export const Subpage = Loadable({
 	loading: () => <div>Loading...</div>
 });
 
+export const Bookfinder = Loadable({
+	loader: () => import ('./Bookfinder/Bookfinder.jsx'),
+	loading: () => <div>Loading...</div>
+});
+
 export const ErrorPage = Loadable({
 	loader: () => import ('./404/404.jsx'),
 	loading: () => <div>Loading...</div>

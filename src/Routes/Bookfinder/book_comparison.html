@@ -1,0 +1,319 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  
+  <title>Book Comparison: Find My Audience</title>
+  
+  <link rel="stylesheet" type="text/css" media="all" href="css/app-dev.css">
+  <link href="http://fonts.googleapis.com/css?family=Lato:300,400,900,300italic,400italic,900italic" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="http://www.findmyaudience.com/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.min.css">
+
+  <link rel="shortcut icon" href="images/FMA_favicon.png" type="image/x-icon" />
+  
+</head>
+
+<body class="book-comparison">
+<div id="skip-link"><a href="#content">Skip to main content</a></div>
+<header role="banner">
+  <nav role="navigation">
+    <h2 class="visually-hidden">Main navigation</h2>
+    <ul class="fadeable-ui">
+      <li class="log-in"><a href="#">Log in</a></li>
+      <li class="sign-up"><a href="#">Sign up</a></li>
+    </ul>
+  </nav>
+  <div class="logo fadeable-ui">
+    <h1>Find My Audience</h1>
+    <!-- Use this on interior pages: <a href="/">Find My Audience</a> -->
+  </div>
+  <div class="nav-toggle">Show navigation</div>
+</header>
+<main id="content">
+
+<!-- ALPHA CUBE - DEC 14, 2015 -->
+<section class="book-comparison-top">
+	<div class="container-fluid">
+	    <h2 class="section-title">Book Comparison Engine</h2>
+        <p>
+            This free service from the book marketing technology team at <a href="http://findmyaudience.com">FIND MY AUDIENCE</a> will help you determine how your book stands in relation to comparable titles in the competitive market for readers' attention.
+        </p>
+        <div class="book-search">
+            <p>If we don't have your book in our database, <a href="#">let us know</a>.</p>
+            <form class="book-title">
+                <div class="field-group">
+                    <label for="user-book-title-top" class="visually-hidden">Enter your book title</label>
+                    <input id="search-book-title" name="user-book-title" type="text" value="The Invention of Wings" placeholder="Enter your book title">
+                    <button id="search-book" type="button">Go</button>
+                </div>
+            </form>
+        </div> 
+	
+        <div class="comparison-report">
+            <div class="selected-book">
+                
+                <img class="book-cover" src="http://findmyaudience.com/fma/profile/image/0143121707" />
+                
+                <div>
+                    <div class="book-title">The Invention of Wings</div>
+                    <div class="author">Sue Monk Kidd</div>
+                </div>
+                <div>
+                    <span class="comp-score">92</span> 
+                    <a href="javascript:;" data-toggle="popover" title="What is Comp Score?" data-content="Explaining the comp score..." data-trigger="focus" >What is this number?</a>
+                </div>
+            </div>
+            
+            <table class="book-comparison-table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col class="amazon" />
+                    <col span="2" class="goodreads" />
+                    <col class="google" />
+                    <col class="google last" />
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th rowspan="2">Rank</th>
+                        <th rowspan="2">Comp Score</th>
+                        <th rowspan="2" class="book-info">Title</th>
+                        <th><img src="images/logo_amazon.png" alt="Logo: Amazon" class="th-logo" /></th>
+                        <th colspan="2"><img src="images/logo_goodreads2.png" alt="Logo: GoodReads" class="th-logo" /></th>
+                        <th colspan="2"><img src="images/logo_google.png" alt="Logo: Google" class="th-logo" /></th>
+                    </tr>
+                    <tr>
+                        <th>Sales Rank</th>
+                        <th>Ratings Count</th>
+                        <th>Avg. Rating</th>
+                        <th>Ratings Count</th>
+                        <th>Avg. Rating</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      <tr>                  
+                          <td>1</td>
+                          <td><span class="comp-score">47</span></td>
+                          <td class="book-info">
+                            <img src="http://ecx.images-amazon.com/images/I/515p3OrN1KL._SL75_.jpg">
+                            <div>
+                                <strong>The Nightingale</strong>
+                                Kristin Hannah
+                            </div>
+                          <td>44</td>
+                          <td>67,346</td>
+                          <td>4.52</td>
+                          <td>2,434</td>
+                          <td>4.5</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>2</td>
+                          <td><span class="comp-score">43</span></td>
+                          <td class="book-info">
+                                <img src="http://ecx.images-amazon.com/images/I/51MfO0a70ZL._SL75_.jpg">
+                                <div>
+                                    <strong>All the Light We Cannot See</strong>
+                                    Anthony Doerr                
+                                </div>
+                          </td>                                                              
+                          <td>22</td>
+                          <td>208,949</td>
+                          <td>4.29</td>
+                          <td>1,482</td>
+                          <td>4</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>3</td>
+                          <td><span class="comp-score">35</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/51ri3drmQpL._SL75_.jpg">
+                              <div>
+                                  <strong>The Boys in the Boat: Nine...</strong>
+                                  Daniel James Brown
+                              </div>
+                          </td>                            
+                          <td>63</td>
+                          <td>1,254</td>
+                          <td>4.28</td>
+                          <td>1,635</td>
+                          <td>4.5</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>4</td>
+                          <td><span class="comp-score">29</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/51ZWha0-eEL._SL75_.jpg">
+                              <div>
+                                  <strong>Orphan Train</strong>
+                                  Christina Baker Kline
+                              </div>
+                          </td>                            
+                          <td>513</td>
+                          <td>146,791</td>
+                          <td>4.1</td>
+                          <td>1,733</td>
+                          <td>3.5</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>5</td>
+                          <td><span class="comp-score">24</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/510XLE4eMsL._SL75_.jpg">
+                              <div>
+                                  <strong>Ordinary Grace: A Novel</strong>
+                                  William Kent Krueger
+                               </div>
+                          </td>                                                               
+                          <td>1,064</td>
+                          <td>17,212</td>
+                          <td>4.11</td>
+                          <td>53</td>
+                          <td>4.5</td>
+                      </tr>
+                  
+                      <tr class="your-book">                  
+                          <td>6</td>
+                          <td><span class="comp-score">23</span></td>
+                          <td class="book-info">
+                              <img src="https://d.gr-assets.com/books/1389130765m/20486871.jpg">
+                              <div>
+                                  <strong>The Invention of Wings</strong>
+                                  Sue Monk Kidd
+                              </div>
+                          </td>                   
+                          <td>1,088</td>
+                          <td>115,761</td>
+                          <td>4.22</td>
+                          <td>32</td>
+                          <td>4</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>7</td>
+                          <td><span class="comp-score">22</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/51tK3Qdv3pL._SL75_.jpg">
+                              <div>
+                                  <strong>Necessary Lies</strong>
+                                  Diane Chamberlain
+                              </div>
+                          </td>                  
+                          <td>243,001</td>
+                          <td>18,945</td>
+                          <td>4.21</td>
+                          <td>22</td>
+                          <td>4.5</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>8</td>
+                          <td><span class="comp-score">17</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/61KaCYPW28L._SL75_.jpg">
+                              <div>
+                                  <strong>The Life We Bury</strong>
+                                  Allen Eskens
+                              </div>
+                          </td>                                                                
+                          <td>651</td>
+                          <td>4,150</td>
+                          <td>3.88</td>
+                          <td>272</td>
+                          <td>4</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>9</td>
+                          <td><span class="comp-score">15</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/51nfPowyuxL._SL75_.jpg">
+                              <div>
+                                  <strong>The Plum Tree</strong>
+                                  Ellen Marie Wiseman
+                                </div>
+                          </td>                                                                  
+                          <td>4,352</td>
+                          <td>5,262</td>
+                          <td>4.01</td>
+                          <td>388</td>
+                          <td>4</td>
+                      </tr>
+                  
+                      <tr>                  
+                          <td>10</td>
+                          <td><span class="comp-score">13</span></td>
+                          <td class="book-info">
+                              <img src="http://ecx.images-amazon.com/images/I/51yiSOX7hdL._SL75_.jpg">
+                              <div>
+                                  <strong>Take Me With You</strong>
+                                  Catherine Ryan Hyde
+                                </div>
+                          </td>                    
+                          <td>2,562</td>
+                          <td>4,150</td>
+                          <td>4.11</td>
+                          <td>34</td>
+                          <td>4</td>
+                      </tr>
+                  
+                  </tbody>	
+            </table>
+        </div>
+        <!-- /ALPHACUBE - DEC 11, 2015 -->
+          
+	</div>
+</section>
+
+    
+</main>
+
+<footer role="contentinfo">
+  <div class="sitemap">
+    <ul>
+      <li><a href="contact">Contact</a></li>
+      <li><a href="about">About</a></li>
+      <li><a href="news-musings">News&amp;Musings</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="jobs">Jobs</a></li>
+      <li><a href="faq">FAQ</a></li>
+      <li><a href="resources">Resources</a></li>
+    </ul>
+  </div>
+  <div class="legal">
+    <ul>
+      <li><a href="#">Terms of Use</a></li>
+      <li><a href="#">Privacy Policy</a></li>
+    </ul>
+  </div>
+</footer>
+
+<div class="blob blob-3 fadeable-ui"></div>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+
+<script>
+	$(function() {
+		$(".book-comparison-table").DataTable({
+			"order": [[ 0, "asc" ]],
+			"searching":   false,
+			"paging": false,
+			"info": false
+		});
+	
+		$("[data-toggle=popover]").popover();
+	});
+</script>
+</body>
+</html>
