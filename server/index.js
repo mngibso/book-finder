@@ -59,6 +59,7 @@ app.use('*', (req, res, next) => {
 });
 
 /****************** Route Handling ******************/
+app.use(express.static('public'))
 // Use api.js for any and all requests made to /api
 app.use('/api', require('./api.js'));
 
