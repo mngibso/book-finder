@@ -1,50 +1,41 @@
 import React, { Component, useState } from "react";
 import Loadable from 'react-loadable';
 import axios from 'axios';
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Container from 'react-bootstrap/Container';
+import FormControl from 'react-bootstrap/FormControl';
+import InputGroup from 'react-bootstrap/InputGroup';
 import './bookfinder.css';
 
-function XBookfinder() {
-	// Declare a new state variable, which we'll call "count"
-	const [count, setCount] = useState(0);
-
-	return (
-		<div>
-			<p>You clicked {count} times</p>
-			<button onClick={() => setCount(count + 1)}>
-				Click me
-			</button>
-		</div>
-	);
-}
 
 function Bookfinder() {
-		return (
-			<div className="home">
+	const [bookTitle, setBookTitle] = useState("");
+	const handleClick = (evt) => {
+		// evt.preventDefault();
+		console.log(`Submitting Title ${bookTitle}`)
+	}
+	return (
+			<Container className="home">
 				<h1>Book Finder</h1>
-				<div className="dropdown">
-					<button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-									data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Dropdown button
-					</button>
-					<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<a className="dropdown-item" href="#">Action</a>
-						<a className="dropdown-item" href="#">Another action</a>
-						<a className="dropdown-item" href="#">Something else here</a>
-					</div>
-				</div>
 
 				<section className="book-comparison-top">
 					<div className="container-fluid">
 						<h2 className="section-title">Book Comparison Engine</h2>
 						<div className="book-search">
-							<form className="book-title">
-								<div className="field-group">
-									<label htmlFor="user-book-title-top" className="visually-hidden">Enter your book title</label>
-									<input id="search-book-title" name="user-book-title" type="text" value="The Invention of Wings"
-												 placeholder="Enter your book title" />
-										<button id="search-book" type="button">Go</button>
-								</div>
-							</form>
+
+							<InputGroup className="mb-3">
+								<InputGroup.Prepend>
+									<Button variant="outline-primary"
+									onClick={e => handleClick(e)}>Find</Button>
+								</InputGroup.Prepend>
+								<FormControl placeholder={"Enter a Book Title"}
+														 value={bookTitle}
+														 onChange={e => setBookTitle(e.target.value)}
+								/>
+							</InputGroup>
+
 						</div>
 
 						<div className="comparison-report">
@@ -63,7 +54,7 @@ function Bookfinder() {
 								</div>
 							</div>
 
-							<table class="dataTable book-comparison-table">
+							<table className="dataTable book-comparison-table">
 								<colgroup>
 												<col className="amazon"/>
 												<col span="2" className="goodreads"/>
@@ -264,8 +255,45 @@ function Bookfinder() {
 					</div>
 
 				</section>
-			</div>
+			</Container>
 		);
 }
-export default Bookfinder;
 
+function ZBookfinder() {
+  return (
+		<>
+			<InputGroup className="mb-3">
+				<InputGroup.Prepend>
+					<Button variant="outline-primary">Button</Button>
+				</InputGroup.Prepend>
+				<FormControl aria-describedby="basic-addon1" />
+			</InputGroup>
+		</>
+)
+}
+function XBookfinder() {
+	// Declare a new state variable, which we'll call "count"
+	const [count, setCount] = useState(0);
+
+	return (
+
+		<div>
+			<p>You clicked {count} times</p>
+			<button onClick={() => setCount(count + 1)}>
+				Click me
+			</button>
+			<div className="dropdown">
+				<button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+								data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Dropdown button
+				</button>
+				<div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					<a className="dropdown-item" href="#">Action</a>
+					<a className="dropdown-item" href="#">Another action</a>
+					<a className="dropdown-item" href="#">Something else here</a>
+				</div>
+			</div>
+		</div>
+);
+}
+export default Bookfinder;

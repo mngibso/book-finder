@@ -26,8 +26,6 @@ class Routes extends Component {
 
 		return (
 			<div>
-				<Navbar />
-
 				<Switch className="main">
 					<Route exact path='/' component={Home}/>
 					<Route path='/subpage' component={Subpage}/>
