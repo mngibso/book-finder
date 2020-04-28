@@ -1,7 +1,10 @@
 import React, { Component, useState } from "react";
 import Loadable from 'react-loadable';
+import Spinner from 'react-bootstrap/Spinner'
+import get from 'lodash/get'
 import axios from 'axios';
 import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Container from 'react-bootstrap/Container';
@@ -12,23 +15,79 @@ import './bookfinder.css';
 
 function Bookfinder() {
 	const [bookTitle, setBookTitle] = useState("");
-	const handleClick = (evt) => {
+	const [selectBooks, setSelectBooks] = useState([]);
+	const [findLoading, setFindLoading] = useState(false);
+	/**
+	 * return the isbn13 for the book
+	 * @param {Object} b book returned from google books api
+	 * @returns {string} isbn13 or empty string
+	 */
+	const getISBN13 = b => {
+		const isbn13 = get(b, 'volumeInfo.industryIdentifiers', [])
+			.filter(i => {
+				console.log(i)
+				return i.type === 'ISBN_13'
+			})
+		console.log(isbn13)
+		if(isbn13.length) {
+			return isbn13[0].identifier
+		}
+		return ''
+	}
+
+	/** search books with given title */
+	const findClick = (evt) =>  {
 		// evt.preventDefault();
+		const url = `https://www.googleapis.com/books/v1/volumes?q=title:${bookTitle}`
+    setFindLoading(true)
+    setSelectBooks([])
+		axios.get(url)
+			.then(res => {
+       	setSelectBooks(res.data.items.map(b => {
+       	  return {
+						thumbnail: get(b, 'volumeInfo.imageLinks.smallThumbnail','images/default_book_cover.jpg' ),
+						title: get(b,'volumeInfo.title','unknown'),
+						authors: get(b,'volumeInfo.authors', []).join(', '),
+						isbn13: getISBN13(b)
+					}
+				})
+					.filter( i => {
+						return i.isbn13 !== '';
+					}))
+			})
+			.finally( () => setFindLoading(false))
 		console.log(`Submitting Title ${bookTitle}`)
 	}
-	return (
-			<Container className="home">
-				<h1>Book Finder</h1>
+	const selectBook = (evt) =>  {
+		console.log(evt)
+		console.log(evt.currentTarget)
+	}
+	let findButton
+	if(!findLoading) {
+		findButton = <Button variant="outline-primary" onClick={e => findClick(e)}>Find</Button>
+	} else {
+		findButton = <Button variant="primary" disabled>
+			<Spinner
+				as="span"
+				animation="grow"
+				size="sm"
+				role="status"
+				aria-hidden="true"
+			/>
+			Searching...
+		</Button>
+	}
 
-				<section className="book-comparison-top">
+	return (
+		<Container className="home">
+			<h1>Book Finder</h1>
+			<section className="book-comparison-top">
 					<div className="container-fluid">
 						<h2 className="section-title">Book Comparison Engine</h2>
 						<div className="book-search">
-
 							<InputGroup className="mb-3">
 								<InputGroup.Prepend>
-									<Button variant="outline-primary"
-									onClick={e => handleClick(e)}>Find</Button>
+									{findButton}
 								</InputGroup.Prepend>
 								<FormControl placeholder={"Enter a Book Title"}
 														 value={bookTitle}
@@ -37,23 +96,25 @@ function Bookfinder() {
 							</InputGroup>
 
 						</div>
-
 						<div className="comparison-report">
-							<div className="selected-book">
+							{ selectBooks.length
+							? <h3>Select a Book</h3>
+							: ''
+							}
+              <ListGroup>
+							{selectBooks.map((b,idx) => {
+								return (
+									<ListGroup.Item key={idx} eventKey={b.isbn13} as="button" action onClick={selectBook} className="selected-book">
+										<img className="book-cover" src={b.thumbnail}/>
+										<div>
+											<div className="book-title">{b.title}</div>
+											<div className="author">{b.authors}</div>
+										</div>
+									</ListGroup.Item>
 
-								<img className="book-cover" src="/fma/profile/image/0143121707"/>
-
-								<div>
-									<div className="book-title">The Invention of Wings</div>
-									<div className="author">Sue Monk Kidd</div>
-								</div>
-								<div>
-									<span className="comp-score">92</span>
-									<a href="#" data-toggle="popover" title="What is Comp Score?"
-										 data-content="Explaining the comp score..." data-trigger="focus">What is this number?</a>
-								</div>
-							</div>
-
+								)
+							})}
+							</ListGroup>
 							<table className="dataTable book-comparison-table">
 								<colgroup>
 												<col className="amazon"/>

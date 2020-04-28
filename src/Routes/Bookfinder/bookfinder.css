@@ -27,12 +27,14 @@ section.book-comparison-top h2.section-title:after { display: none; }
 .comparison-report { text-align: left; }
 
 /* SELECTED BOOK */
-.selected-book { display: table; margin: 0 auto 50px; background: #ffc; border: 2px solid #fd3100; width: 480px; padding: 20px; }
+.selected-book {
+	width: 550px;
+}
 .selected-book > * { display: table-cell; vertical-align: middle; padding: 0 15px}
-.selected-book > .book-cover { max-width: 45px; padding: 4px; border: 1px solid #ddd; }
+.selected-book > .book-cover { max-width: 87px; padding: 4px; border: 1px solid #ddd; float: left; }
 .selected-book .book-title { font-weight: bold; }
 /* COMPARISON TABLE */
-table.dataTable.book-comparison-table { border-collapse: collapse; width: 100%; border-top: 1px solid #ddd; margin-bottom: 30px; }
+table.dataTable.book-comparison-table { margin-bottom: 30px; width: 100%; border-collapse: collapse; border-top: 1px solid #ddd; }
 table.dataTable.book-comparison-table th { text-align: center; border-bottom: 1px solid #ddd; padding: 10px; vertical-align: bottom; font-weight: normal }
 table.dataTable.book-comparison-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle; }
 
@@ -44,18 +46,18 @@ table.dataTable.book-comparison-table thead th[rowspan='2'].sorting_desc_disable
 
 table.dataTable.book-comparison-table th.book-info,
 table.dataTable.book-comparison-table td.book-info  { text-align: left; }
-table.dataTable.book-comparison-table td.book-info img { float: left; width: 50px; border-radius: 3px; margin-right: 10px; }
+table.dataTable.book-comparison-table td.book-info img { margin-right: 10px; width: 50px; border-radius: 3px; float: left; }
 table.dataTable.book-comparison-table td.book-info > div { width: 200px; }
 table.dataTable.book-comparison-table td.book-info > div > strong { display: block; color: #fd3100 }
 
-table.dataTable.book-comparison-table .th-logo { max-height: 31px; width: auto; margin: 0 auto; }
+table.dataTable.book-comparison-table .th-logo { margin: 0 auto; width: auto; max-height: 31px; }
 
 table.dataTable.book-comparison-table tr.your-book td { background: #ffc; }
 table.dataTable.book-comparison-table tr.your-book { border: 2px solid #fd3100; }
 
 
-span.comp-score { display: inline-block; width: 32px; height: 32px; background: #fe3100; color: #fff; font-size: 14px; line-height: 32px; text-align: center; margin-right: 5px;
-	border-radius: 50%;}
+span.comp-score { margin-right: 5px; width: 32px; height: 32px; background: #fe3100;
+	border-radius: 50%; font-size: 14px; color: #fff; display: inline-block; line-height: 32px; text-align: center;}
 span.comp-score + a { font-size: 12px; }
 
 table.dataTable.book-comparison-table col.amazon,
