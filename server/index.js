@@ -14,6 +14,7 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const goodreadsRouter = require('./api/goodreads')
 
 const PORT = process.env.PORT || 3000;
 
@@ -42,8 +43,8 @@ const cacheTime = 172800000; // 2 Days in ms - Tells clients to cache static fil
 
 app.use(helmet()); // Sets some good default headers
 app.use(compression()); // Enables gzip compression
-app.use(bodyParser.json()) // Lets express handle JSON encoded data sent on the body of requests
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
 
 /****************** Serve Static Files --> JS, CSS, IMAGES ETC ******************/
 app.use(express.static(path.join(__dirname, '../public'), { maxAge: cacheTime } ));
@@ -61,11 +62,13 @@ app.use('*', (req, res, next) => {
 /****************** Route Handling ******************/
 app.use(express.static('public'))
 // Use api.js for any and all requests made to /api
-app.use('/api', require('./api.js'));
+// app.use('/api', require('./api.js'));
 
-app.use('/*', (req, res) => {
-	res.sendFile(path.join(__dirname, "../public/index.html"));
-});
+app.use('/goodreads', goodreadsRouter);
+
+// app.use('/*', (req, res) => {
+	// res.sendFile(path.join(__dirname, "../public/index.html"));
+// });
 
 // Return a 404 page for all other requests - This should be the last get/put/post/delete/all/use call for app
 app.use("*", (req, res) => {
