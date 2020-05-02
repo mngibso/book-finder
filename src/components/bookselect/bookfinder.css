@@ -23,15 +23,13 @@ section.book-comparison-top h2.section-title { margin: 30px 0; }
 section.book-comparison-top h2.section-title:after { display: none; }
 
 .book-search form { margin: 60px auto; }
-button.find { min-width: 200px; }
+
 .comparison-report { text-align: left; }
 
 /* SELECTED BOOK */
-.selected-book {
-	width: 550px;
-}
+.selected-book { margin: 0 auto 50px; width: 480px; padding: 20px; background: #ffc; border: 2px solid #fd3100; display: table; }
 .selected-book > * { display: table-cell; vertical-align: middle; padding: 0 15px}
-.selected-book > .book-cover { max-width: 87px; padding: 4px; border: 1px solid #ddd; float: left; }
+.selected-book > .book-cover { max-width: 45px; padding: 4px; border: 1px solid #ddd; }
 .selected-book .book-title { font-weight: bold; }
 /* COMPARISON TABLE */
 table.dataTable.book-comparison-table { margin-bottom: 30px; width: 100%; border-collapse: collapse; border-top: 1px solid #ddd; }
