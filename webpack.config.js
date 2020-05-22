@@ -17,7 +17,6 @@ const StyleLintPlugin = require("stylelint-webpack-plugin");
 const WebpackBar = require('webpackbar');
 
 module.exports = () => {
-
 	const env = dotenv.config().parsed;
 	const envKeys = Object.keys(env).reduce((prev, next) => {
 		prev[`process.env.${next}`] = JSON.stringify(env[next]);
@@ -25,6 +24,7 @@ module.exports = () => {
 	}, {});
 
 	return {
+		devtool: 'inline-source-map',
 		entry: {
 			main: "./src/index.jsx", // Entry point of where webpack should start from
 		},
@@ -37,7 +37,7 @@ module.exports = () => {
 			rules: [
 				// lint all jsx files and then run babel on them before bundling
 				{
-					test: /\.jsx$/,
+					test: /\.(jsx|js)$/,
 					exclude: /node_modules/,
 					use: ["babel-loader", "eslint-loader"],
 				},

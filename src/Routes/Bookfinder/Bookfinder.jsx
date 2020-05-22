@@ -13,6 +13,7 @@ import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import './bookfinder.css';
+import GoodreadsService from '../../Services/goodreads-service'
 
 
 function Bookfinder() {
@@ -20,6 +21,9 @@ function Bookfinder() {
   const [selectBooks, setSelectBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
+  console.log(`process.env.APP_URI=${process.env.APP_URI}`)
+  console.log(GoodreadsService)
+
   /**
    * return the isbn13 for the book
    * @param {Object} b book returned from google books api
@@ -59,28 +63,44 @@ function Bookfinder() {
             isbn13: getISBN13(b)
           }
         })
-          .filter(i => {
-            return i.isbn13 !== '';
-          })
-        setSelectBooks(uniqWith(sb, (a, b) => {
-          return a.title === b.title && a.authors === b.authors
-        }))
+        .filter(i => {
+          return i.isbn13 !== '';
+        })
+
+        // Don't include > 1 book with same title and author
+        setSelectBooks(uniqWith(sb, (a, b) =>
+          a.title === b.title && a.authors === b.authors
+        ))
       })
       .finally(() => setFindLoading(false))
     console.log(`Submitting Title ${bookTitle}`)
   }
+
+  const getSimilarBooksGoodreads = (isbn13) => {
+    GoodreadsService.getSimilars(isbn13)
+      .then((data) => {
+        console.log('blah blah')
+        console.log(data)
+      })
+  }
+
   const selectBook = (evt) => {
     console.log(evt)
     console.log(evt.currentTarget)
-    const isbn13 = get(evt, 'currentTarget.dataset.rbEventKey',null)
-    const selectedBook = find(selectBooks, { isbn13 })
-    if (selectedBook) {
-      setSelectBooks(selectBooks.filter( b => b.isbn13 === isbn13))
+    const isbn13 = get(evt, 'currentTarget.dataset.rbEventKey', null)
+    const selectedBook = find(selectBooks, {isbn13})
+    if (!selectedBook) {
+      console.warn(`No book found for ${isbn13}`)
     }
+    setSelectBooks(selectBooks.filter(b => b.isbn13 === isbn13))
+
+    // get goodreads
+    getSimilarBooksGoodreads(isbn13)
+    // get amazon
   }
 
   let selectedBookItem
-  if(selectedBook) {
+  if (selectedBook) {
     selectedBookItem =
       <div className="selected-book">
         <img className="book-cover" src={selectedBook.thumbnail}/>
@@ -108,6 +128,7 @@ function Bookfinder() {
   return (
     <Container className="home">
       <h1>Book Finder</h1>
+      -{process.env.GOODREADS_USER_ID}-
       <section className="book-comparison-top">
         <div className="container-fluid">
           <h2 className="section-title">Book Comparison Engine</h2>

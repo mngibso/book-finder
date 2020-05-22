@@ -1,9 +1,44 @@
 const router = require('express').Router()
+const get = require('lodash/get')
 const axios = require('axios')
-const throttle = require('lodash/throttle')
 const convert = require('xml-js');
 let lastCalledMS = Date.now()
 const ThrottleMS = 1000
+
+/*
+   "GoodreadsResponse.book.image_url._text": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1441739388l/25990773._SX98_.jpg",
+   "GoodreadsResponse.book.average_rating._text": "4.57",
+   "GoodreadsResponse.book.ratings_count._cdata": "199",
+   "GoodreadsResponse.book.authors.author.name._text": "Anthony Dorrer",
+   "GoodreadsResponse.book.url._cdata": "https://www.goodreads.com/book/show/25990773-the-nightingale",
+
+ */
+const _toAuthors = (authors) => {
+  if(!Array.isArray(authors)) {
+    authors = [authors]
+  }
+  return authors.map( a => {
+    return {
+      name: get(a, 'author.name._text', '')
+    }
+  })
+}
+
+const _toBook = (book) => {
+  return {
+    thumbnail: get(book, 'image_url._text','') || get(book, 'image_url._cdata','') ,
+    averageRating: get(book, 'average_rating._text','') || get(book, 'average_rating._cdata',''),
+    ratingsCount: get(book, 'ratings_count._text','') || get(book, 'ratings_count._cdata',''),
+    link: get(book, 'link._cdata','') || get(book, 'link._text',''),
+    title:  get(book, 'title._text','') || get(book, 'title._cdata',''),
+    isbn13:  get(book, 'isbn13._text','') || get(book, 'isbn13._cdata',''),
+    authors: _toAuthors(get(book, 'authors', []))
+  }
+}
+
+const _toSimilars = (books) => {
+  return books.map( b => _toBook(b))
+}
 
 const _getSimilarBooks = (url, res) => {
   console.log('_getSimilarBooks ' + url)
@@ -13,8 +48,15 @@ const _getSimilarBooks = (url, res) => {
     console.log(`--Called ${d}`)
   axios.get(url)
     .then(gRes => {
-      const json = convert.xml2json(gRes.data, {compact: true});
-      res.json(json)
+      console.log(gRes.data)
+      const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
+      // res.json(json)
+      const similars = _toSimilars(get(json,'GoodreadsResponse.book.similar_books.book',[]))
+      const book = _toBook(get(json, 'GoodreadsResponse.book', {}))
+      res.json( {
+        book,
+        similars
+      })
     })
     .catch(e => {
       console.log('ERRROR!!!')
@@ -27,7 +69,7 @@ const _getSimilarBooks = (url, res) => {
 }
 
 // Get similar books to isbn13 book
-router.route('/:isbn13').get((req, res) => {
+router.route('/isbn/:isbn13').get((req, res) => {
   const isbn13 = req.params.isbn13
   const key = process.env.GOODREADS_API_KEY || null;
   if (key === null) {

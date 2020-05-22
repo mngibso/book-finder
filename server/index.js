@@ -3,6 +3,7 @@
 require("dotenv").config();
 
 const fs = require('fs');
+const cors = require('cors');
 const path = require('path');
 const util = require('util');
 const express = require('express');
@@ -41,6 +42,7 @@ if (process.env.DB_URI) {
 /****************** Server Options ******************/
 const cacheTime = 172800000; // 2 Days in ms - Tells clients to cache static files
 
+app.use(cors());
 app.use(helmet()); // Sets some good default headers
 app.use(compression()); // Enables gzip compression
 app.use(express.json());
@@ -64,7 +66,7 @@ app.use(express.static('public'))
 // Use api.js for any and all requests made to /api
 // app.use('/api', require('./api.js'));
 
-app.use('/goodreads', goodreadsRouter);
+app.use('/api/goodreads', goodreadsRouter);
 
 // app.use('/*', (req, res) => {
 	// res.sendFile(path.join(__dirname, "../public/index.html"));
