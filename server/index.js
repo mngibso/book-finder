@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const goodreadsRouter = require('./api/goodreads')
+const googleRouter = require('./api/googlebooks')
 
 const PORT = process.env.PORT || 3000;
 
@@ -67,6 +68,7 @@ app.use(express.static('public'))
 // app.use('/api', require('./api.js'));
 
 app.use('/api/goodreads', goodreadsRouter);
+app.use('/api/googlebooks', googleRouter);
 
 // app.use('/*', (req, res) => {
 	// res.sendFile(path.join(__dirname, "../public/index.html"));

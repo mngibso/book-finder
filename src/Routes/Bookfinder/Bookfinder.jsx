@@ -1,4 +1,4 @@
-import React, {Component, useState} from "react";
+import React, {Component, useState, useEffect} from "react";
 import Loadable from 'react-loadable';
 import Spinner from 'react-bootstrap/Spinner'
 import get from 'lodash/get'
@@ -14,15 +14,34 @@ import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import './bookfinder.css';
 import GoodreadsService from '../../Services/goodreads-service'
+import GooglebooksService from '../../Services/googlebooks-service'
 
+
+const _sameBook = (b1, b2) => {
+  if (b1.isbn13 === b2.isbn13)   {
+    return true
+  }
+  const a1 = get(b1, 'authors', []).sort()
+  const a2 = get(b2, 'authors', []).sort()
+  return b1.title.toLowerCase() === b2.title.toLowerCase() && a1.join(':') === a2.join(':')
+}
 
 function Bookfinder() {
   const [bookTitle, setBookTitle] = useState("");
   const [selectBooks, setSelectBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState([]);
+  const [goodreadsBooks, setGoodreadsBooks] = useState([]);
+  const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
   console.log(`process.env.APP_URI=${process.env.APP_URI}`)
   console.log(GoodreadsService)
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    let promises = goodreadsBooks.filter( b => {
+    })
+    console.log(`Goodreades books = ${goodreadsBooks.length}`);
+  },[goodreadsBooks]);
 
   /**
    * return the isbn13 for the book
@@ -48,11 +67,17 @@ function Bookfinder() {
    * @returns {undefined}
    */
   const findClick = (evt) => {
-    // evt.preventDefault();
-    const url = `https://www.googleapis.com/books/v1/volumes?q=title:${bookTitle}`
     setFindLoading(true)
     setSelectedBook(null)
     setSelectBooks([])
+    GooglebooksService.findBook(bookTitle)
+    .then((sBooks) => {
+      setSelectBooks(sBooks)
+    })
+    .finally(() => setFindLoading(false))
+
+    /*
+    const url = `https://www.googleapis.com/books/v1/volumes?q=title:${bookTitle}`
     axios.get(url)
       .then(res => {
         const sb = res.data.items.map(b => {
@@ -73,7 +98,8 @@ function Bookfinder() {
         ))
       })
       .finally(() => setFindLoading(false))
-    console.log(`Submitting Title ${bookTitle}`)
+
+     */
   }
 
   const getSimilarBooksGoodreads = (isbn13) => {
@@ -81,6 +107,10 @@ function Bookfinder() {
       .then((data) => {
         console.log('blah blah')
         console.log(data)
+        const books = data.similars
+        data.book.selected = true
+        books.push(data.book)
+        setGoodreadsBooks(books)
       })
   }
 
@@ -369,6 +399,7 @@ function Bookfinder() {
   );
 }
 
+/*
 function ZBookfinder() {
   return (
     <>
@@ -407,5 +438,6 @@ function XBookfinder() {
     </div>
   );
 }
+*/
 
 export default Bookfinder;

@@ -58,9 +58,7 @@ const _getBook = (isbn13) => {
       console.log(`--Call ${d}`)
       axios.get(url)
       .then(gRes => {
-        //console.log(gRes.data)
         const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
-        // res.json(json)
         const book = _toBook(get(json, 'GoodreadsResponse.book', {}))
         console.log(`resolveBook`)
         console.log(book)
@@ -155,32 +153,6 @@ router.route('/isbn/:isbn13').get((req, res) => {
   }
   const fn = _getSimilarBooks(url,res)
   _throttleCall(fn)
-
-  /*
-  const now = Date.now()
-  const diff = now - lastCalledMS
-  const fn = _getSimilarBooks(url,res)
-  console.log(`LCMS ${lastCalledMS}, ${now}, ${diff}`)
-  // if the time since the last call is > throttle time
-  if(diff > ThrottleMS) {
-    lastCalledMS = now
-    fn()
-    return
-  }
-  const waitTimeMS = ThrottleMS - diff
-  lastCalledMS = now + waitTimeMS
-  setTimeout( fn, ThrottleMS - diff + 50 )
-
-  //throttle(
-    //_getSimilarBooks(url, res)
-  //, 13000, { 'trailing': false })()
-
-
-      // Exercise.findById(req.params.isbn13)
-    // .then(exercise => res.json(exercise))
-    // .catch(err => res.status(400).json('Error: ' + err));
-
-   */
 });
 
 module.exports = router
