@@ -21,8 +21,8 @@ const _getISBN13 = b => {
 }
 
 class GooglebooksService {
-  getSimilars(isbn13) {
-    const url = `${process.env.API_URI}/goodreads/isbn/${isbn13}`
+  getBook(isbn13) {
+    const url = `${process.env.API_URI}/googlebooks/isbn/${isbn13}`
     console.log(url)
     return axios.get(url)
     .then(res => {
@@ -30,7 +30,6 @@ class GooglebooksService {
       console.log(res)
       return res.data
     })
-    //.finally(() => setFindLoading(false))
   }
 
   findBook(bookTitle) {
