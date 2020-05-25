@@ -9,6 +9,7 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 
+/*
 export const Home = Loadable({
 	loader: () => import('./Home/Home.jsx'),
 	loading: () => <div>Loading...</div>
@@ -19,8 +20,9 @@ export const Subpage = Loadable({
 	loading: () => <div>Loading...</div>
 });
 
+ */
 export const Bookfinder = Loadable({
-	loader: () => import ('./Bookfinder/Bookfinder.jsx'),
+	loader: () => import ('../components/Bookfinder.jsx'),
 	loading: () => <div>Loading...</div>
 });
 

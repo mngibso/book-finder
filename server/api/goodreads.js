@@ -17,20 +17,22 @@ const _toAuthors = (authors) => {
   if(!Array.isArray(authors)) {
     authors = [authors]
   }
-  return authors.map( a => {
-    return {
-      name: get(a, 'author.name._text', '')
-    }
-  })
+  return authors.map( a => get(a, 'author.name._text', '')
+  )
 }
 
 const _toBook = (book) => {
+  const title =  get(book, 'title_without_series._text','')
+    || get(book, 'title_without_series._cdata','')
+    || get(book, 'title._text','')
+    || get(book, 'title._cdata','')
   return {
     thumbnail: get(book, 'image_url._text','') || get(book, 'image_url._cdata','') ,
     averageRating: get(book, 'average_rating._text','') || get(book, 'average_rating._cdata',''),
     ratingsCount: get(book, 'ratings_count._text','') || get(book, 'ratings_count._cdata',''),
     link: get(book, 'link._cdata','') || get(book, 'link._text',''),
-    title:  get(book, 'title._text','') || get(book, 'title._cdata',''),
+    title,
+    subTitle:  get(book, 'subTitle._text','') || get(book, 'subTitle._cdata',''),
     isbn13:  get(book, 'isbn13._text','') || get(book, 'isbn13._cdata',''),
     authors: _toAuthors(get(book, 'authors', []))
   }
