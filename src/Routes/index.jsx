@@ -27,7 +27,7 @@ class Routes extends Component {
 		return (
 			<div>
 				<Switch className="main">
-					<Route exact path='/' component={Home}/>
+					<Route exact path='/' component={Bookfinder}/>
 					<Route path='/subpage' component={Subpage}/>
 					<Route path='/bookfinder' component={Bookfinder}/>
 					<Route component={ErrorPage}/> {/* This route is run when no matches are found - It's your 404 fallbback */}

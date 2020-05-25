@@ -31,11 +31,13 @@ const _getUrl = (isbn13) => {
   if (key === null) {
     throw new Error('Error: required "GOOGLE_API_KEY" not defined in env')
   }
-  return `https://www.googleapis.com/books/v1/volumes?q=isbn:{$isbn13}&key=${key}`
+  return `https://www.googleapis.com/books/v1/volumes?q=isbn13:${isbn13}&key=${key}`
 }
 
 const _getBook = async (isbn13) => {
-  axios.get(url)
+  const url = _getUrl(isbn13)
+  console.log(`googlebooks getBook ${url}`)
+  return axios.get(url)
   .then(gRes => {
     console.log(gRes.data)
     //const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
@@ -43,7 +45,7 @@ const _getBook = async (isbn13) => {
     const book = _toBook(get(gRes, 'data.items[0]', {}))
     console.log(`resolveBook`)
     console.log(book)
-    resolve(book)
+    return book
   })
   .catch(e => {
     console.log(e)
