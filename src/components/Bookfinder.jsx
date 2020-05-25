@@ -12,9 +12,9 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
-import './bookfinder.css';
-import GoodreadsService from '../../Services/goodreads-service'
-import GooglebooksService from '../../Services/googlebooks-service'
+import '../Routes/Bookfinder/bookfinder.css';
+import GoodreadsService from '../Services/goodreads-service'
+import GooglebooksService from '../Services/googlebooks-service'
 
 
 const _sameBook = (b1, b2) => {
