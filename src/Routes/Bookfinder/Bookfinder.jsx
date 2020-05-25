@@ -18,7 +18,7 @@ import GooglebooksService from '../../Services/googlebooks-service'
 
 
 const _sameBook = (b1, b2) => {
-  if (b1.isbn13 === b2.isbn13)   {
+  if (b1.isbn13 === b2.isbn13) {
     return true
   }
   const a1 = get(b1, 'authors', []).sort()
@@ -37,10 +37,23 @@ function Bookfinder() {
   console.log(GoodreadsService)
 
   useEffect(() => {
-    // Update the document title using the browser API
-    let promises = goodreadsBooks.filter( b => {
-    })
     console.log(`Goodreades books = ${goodreadsBooks.length}`);
+
+    // Get ratings for googlebooks
+    const promises = goodreadsBooks.filter( bk1 => {
+      return googleBooks.findIndex( (bk2) => {
+        return _sameBook(bk1, bk2)
+      }) === -1
+    })
+    .map( b => {
+      return GooglebooksService.getBook(b.isbn13)
+    })
+    Promise.all(promises)
+    .then(( gglBooks ) => {
+      setGoogleBooks(gglBooks)
+      console.log('set google books')
+      console.log(gglBooks)
+    })
   },[goodreadsBooks]);
 
   /**
