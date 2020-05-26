@@ -1,14 +1,9 @@
-import React, {Component, useState, useEffect} from "react";
-import Loadable from 'react-loadable';
+import React, {useState, useEffect} from "react";
 import Spinner from 'react-bootstrap/Spinner'
 import get from 'lodash/get'
 import find from 'lodash/find'
-import uniqWith from 'lodash/uniqWith'
-import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Container from 'react-bootstrap/Container';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -18,8 +13,9 @@ import GooglebooksService from '../Services/googlebooks-service'
 import SimilarBooks from './SimilarBooks.jsx'
 
 
+// return `true` if b1 and b2 are effectively the same book
 const _sameBook = (b1, b2) => {
-  if (b1.isbn13 === b2.isbn13) {
+  if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
     return true
   }
   const a1 = get(b1, 'authors', []).sort()
@@ -29,6 +25,7 @@ const _sameBook = (b1, b2) => {
   return b1Title === b2Title && a1.join(':') === a2.join(':')
 }
 
+// find books similar to the book selected
 function Bookfinder() {
   const [bookTitle, setBookTitle] = useState("");
   const [selectBooks, setSelectBooks] = useState([]);
@@ -36,43 +33,23 @@ function Bookfinder() {
   const [goodreadsBooks, setGoodreadsBooks] = useState([]);
   const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
-  console.log(`process.env.APP_URI=${process.env.APP_URI}`)
-  console.log(GoodreadsService)
 
-  let oldGoodreadsBooks = ''
+  // When we obtain goodreadsBooks, get ratings for googlebooks
   useEffect(() => {
-    // Get ratings for googlebooks
     const promises = goodreadsBooks.filter( bk1 => {
       return googleBooks.findIndex( (bk2) => {
         return _sameBook(bk1, bk2)
       }) === -1
     })
     .map( b => {
-      return GooglebooksService.getBook(b.isbn13)
+      const author = (b.authors || []).join(" ")
+      return GooglebooksService.getBookByTitle(b.title, author)
     })
     Promise.all(promises)
     .then(( gglBooks ) => {
-      setGoogleBooks(gglBooks)
+      setGoogleBooks(gglBooks.filter(b => b.title))
     })
   },[goodreadsBooks]);
-
-  /**
-   * return the isbn13 for the book
-   * @param {Object} b book returned from google books api
-   * @returns {string} isbn13 or empty string
-   */
-  const getISBN13 = b => {
-    const isbn13 = get(b, 'volumeInfo.industryIdentifiers', [])
-      .filter(i => {
-        console.log(i)
-        return i.type === 'ISBN_13'
-      })
-    console.log(isbn13)
-    if (isbn13.length) {
-      return isbn13[0].identifier
-    }
-    return ''
-  }
 
   /**
    * search books with given title
@@ -83,64 +60,37 @@ function Bookfinder() {
     setFindLoading(true)
     setSelectedBook(null)
     setSelectBooks([])
-    GooglebooksService.findBook(bookTitle)
+    GooglebooksService.findBooks(bookTitle)
     .then((sBooks) => {
       setSelectBooks(sBooks)
     })
     .finally(() => setFindLoading(false))
-
-    /*
-    const url = `https://www.googleapis.com/books/v1/volumes?q=title:${bookTitle}`
-    axios.get(url)
-      .then(res => {
-        const sb = res.data.items.map(b => {
-          return {
-            thumbnail: get(b, 'volumeInfo.imageLinks.smallThumbnail', 'images/default_book_cover.jpg'),
-            title: get(b, 'volumeInfo.title', 'unknown'),
-            authors: get(b, 'volumeInfo.authors', []).join(', '),
-            isbn13: getISBN13(b)
-          }
-        })
-        .filter(i => {
-          return i.isbn13 !== '';
-        })
-
-        // Don't include > 1 book with same title and author
-        setSelectBooks(uniqWith(sb, (a, b) =>
-          a.title === b.title && a.authors === b.authors
-        ))
-      })
-      .finally(() => setFindLoading(false))
-
-     */
   }
 
-  const getSimilarBooksGoodreads = (isbn13) => {
-    GoodreadsService.getSimilars(isbn13)
+  // Get books similar to 'title' from goodreads api
+  const getSimilarBooksGoodreads = (title) => {
+    GoodreadsService.getSimilars(title)
       .then((data) => {
-        console.log('blah blah')
-        console.log(data)
         const books = data.similars
+        // add the book we're search for to the similars list
         data.book.selected = true
         books.push(data.book)
-        console.log('set goodreads book')
         setGoodreadsBooks(books)
       })
   }
 
+  // Book is selected to find similars for
   const selectBook = (evt) => {
-    console.log(evt)
-    console.log(evt.currentTarget)
     const isbn13 = get(evt, 'currentTarget.dataset.rbEventKey', null)
     const selectedBook = find(selectBooks, {isbn13})
     if (!selectedBook) {
       console.warn(`No book found for ${isbn13}`)
     }
+    // Only show the selected book
     setSelectBooks(selectBooks.filter(b => b.isbn13 === isbn13))
-
     // get goodreads
-    getSimilarBooksGoodreads(isbn13)
-    // get amazon
+    getSimilarBooksGoodreads(selectedBook.title)
+    // ToDo: get amazon -
   }
 
   let selectedBookItem
@@ -172,7 +122,6 @@ function Bookfinder() {
   return (
     <Container className="home">
       <h1>Book Finder</h1>
-      -{process.env.GOODREADS_USER_ID}-
       <section className="book-comparison-top">
         <div className="container-fluid">
           <h2 className="section-title">Book Comparison Engine</h2>

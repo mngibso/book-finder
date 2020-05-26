@@ -1,44 +1,54 @@
-import React, {Component, useState, useEffect} from "react";
-import Loadable from 'react-loadable';
-import Spinner from 'react-bootstrap/Spinner'
+import React, {useState, useEffect} from "react";
 import get from 'lodash/get'
 import find from 'lodash/find'
-import uniqWith from 'lodash/uniqWith'
-import axios from 'axios';
-import Button from 'react-bootstrap/Button';
-import ListGroup from 'react-bootstrap/ListGroup';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Container from 'react-bootstrap/Container';
-import FormControl from 'react-bootstrap/FormControl';
-import InputGroup from 'react-bootstrap/InputGroup';
 import '../Routes/Bookfinder/bookfinder.css';
-import GoodreadsService from '../Services/goodreads-service'
-import GooglebooksService from '../Services/googlebooks-service'
 
-
+/**
+ * Compare books and return `true` if they are essentially the same book.
+ * @param {Object} b1
+ * @param {Object} b2
+ * @return {boolean} returns true if books match
+ * @private
+ */
 const _sameBook = (b1, b2) => {
-  if (b1.isbn13 === b2.isbn13) {
+  if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
     return true
   }
   const a1 = get(b1, 'authors', []).sort()
   const a2 = get(b2, 'authors', []).sort()
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
-  return b1Title === b2Title && a1.join(':') === a2.join(':')
+  let titlesMatch
+  if (b1Title.length > b2Title.length) {
+      titlesMatch = b1Title.includes(b2Title)
+  } else {
+    titlesMatch = b2Title.includes(b1Title)
+  }
+  return titlesMatch && a1.join(':') === a2.join(':')
 }
 
 
+/**
+ * Display table of books similar to the select book
+ * @param {Object} props - arrays of books to display
+ * @return {*}
+ * @constructor
+ */
 function SimilarBooks(props) {
   const {goodreadsBooks=[], googleBooks=[], amazonBooks=[]} = props
   const [similarBooks, setSimilarBooks] = useState([]);
-  console.log(`NOT use effect sb = ${similarBooks.length} gr = ${goodreadsBooks.length} gb = ${googleBooks.length}, ab = ${amazonBooks.length}`)
 
+  // merge incoming books arrays
   useEffect(() => {
     // if (amazonBooks.length || goodreadsBooks.length || googleBooks.length) { _merge() }
-    if (goodreadsBooks.length || googleBooks.length) { _merge() }
+    if (goodreadsBooks.length || googleBooks.length) {
+      _merge()
+    } else {
+      setSimilarBooks([])
+    }
   },[goodreadsBooks, googleBooks]);
 
+  // given the books arrays, merge them as best as possible to give ratings in table
   const _merge = () => {
     const sims = []
     let count = 0
@@ -67,9 +77,7 @@ function SimilarBooks(props) {
     setSimilarBooks(sims)
   }
   return (
-    <div>{googleBooks.length}<br/>
-
-  {goodreadsBooks.length}
+    <div>
       {similarBooks.length > 0 &&
       <table className="dataTable book-comparison-table">
         <colgroup>
@@ -114,7 +122,6 @@ function SimilarBooks(props) {
             <td>{book.googleBook.averageRating}</td>
           </tr>
         ))}
-
         </tbody>
       </table>
       }

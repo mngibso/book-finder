@@ -20,20 +20,22 @@ const _getISBN13 = b => {
   return ''
 }
 
+// provides googlebooks api
 class GooglebooksService {
-  getBook(isbn13) {
-    const url = `${process.env.API_URI}/googlebooks/isbn/${isbn13}`
-    console.log(url)
+  getBookByTitle(title, author) {
+    let url = `${process.env.API_URI}/googlebooks/title/${encodeURIComponent(title)}`
+    if (author) {
+      url += `?author=${encodeURIComponent(author)}`
+    }
     return axios.get(url)
     .then(res => {
-      console.log('return from api call')
-      console.log(res)
       return res.data
     })
   }
 
-  findBook(bookTitle) {
-    const url = `https://www.googleapis.com/books/v1/volumes?q=title:${bookTitle}`
+  // provide an array of books with titles similar to bookTitle
+  findBooks(bookTitle) {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=title:${encodeURIComponent(bookTitle)}`
     return axios.get(url)
     .then(res => {
       const sb = res.data.items.map(b => {
@@ -53,8 +55,6 @@ class GooglebooksService {
         a.title === b.title && a.authors === b.authors
       )
     })
-    // .finally(() => setFindLoading(false))
-    // console.log(`Submitting Title ${bookTitle}`)
   }
 }
 export default new GooglebooksService()
