@@ -9,18 +9,6 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 
-/*
-export const Home = Loadable({
-	loader: () => import('./Home/Home.jsx'),
-	loading: () => <div>Loading...</div>
-});
-
-export const Subpage = Loadable({
-	loader: () => import ('./Subpage/Subpage.jsx'),
-	loading: () => <div>Loading...</div>
-});
-
- */
 export const Bookfinder = Loadable({
 	loader: () => import ('../components/Bookfinder.jsx'),
 	loading: () => <div>Loading...</div>

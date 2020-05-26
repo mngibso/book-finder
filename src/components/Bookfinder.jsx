@@ -52,14 +52,25 @@ function Bookfinder() {
   },[goodreadsBooks]);
 
   /**
+   * clear saved books
+   * @private
+   * @returns {undefined}
+   */
+  const _reset = () => {
+    setSelectedBook(null)
+    setSelectBooks([])
+    setGoodreadsBooks([])
+    setGoogleBooks([])
+    GooglebooksService.findBooks(bookTitle)
+  }
+  /**
    * search books with given title
    * @param {Object} evt - the click event
    * @returns {undefined}
    */
   const findClick = (evt) => {
     setFindLoading(true)
-    setSelectedBook(null)
-    setSelectBooks([])
+    _reset()
     GooglebooksService.findBooks(bookTitle)
     .then((sBooks) => {
       setSelectBooks(sBooks)
