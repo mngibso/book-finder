@@ -1,10 +1,13 @@
 const router = require('express').Router()
 const get = require('lodash/get')
 const axios = require('axios')
-const convert = require('xml-js');
-let lastCalledMS = Date.now()
-const ThrottleMS = 1000
 
+/**
+ * extract the isbn13 from a google book
+ * @param {Object} book
+ * @return {string} isbn13
+ * @private
+ */
 const _getISBN13 = (book) => {
   const identifiers = get(book, 'volumeInfo.industryIdentifiers',[])
   return identifiers.reduce((a, c) => {
@@ -16,6 +19,12 @@ const _getISBN13 = (book) => {
   }, '')
 }
 
+/**
+ * simplify book format
+ * @param {Object} book
+ * @return {{averageRating: *, isbn13: string, link: *, ratingsCount: *, title: *, authors: *}}
+ * @private
+ */
 const _toBook = (book) => {
   return {
     averageRating: get(book, 'volumeInfo.averageRating',''),
@@ -27,111 +36,84 @@ const _toBook = (book) => {
   }
 }
 
-const _getUrl = (isbn13) => {
+/**
+ * return a googlebooks api url
+ * @param {string} title
+ * @param {string} author
+ * @return {string} url
+ * @private
+ */
+const _getUrl = (title, author) => {
   const key = process.env.GOOGLE_API_KEY || null;
   if (key === null) {
     throw new Error('Error: required "GOOGLE_API_KEY" not defined in env')
   }
-  return `https://www.googleapis.com/books/v1/volumes?q=isbn13:${isbn13}&key=${key}`
-}
-
-const _getBook = async (isbn13) => {
-  const url = _getUrl(isbn13)
-  console.log(`googlebooks getBook ${url}`)
-  return axios.get(url)
-  .then(gRes => {
-    console.log(gRes.data)
-    //const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
-    // res.json(json)
-    const book = _toBook(get(gRes, 'data.items[0]', {}))
-    console.log(`resolveBook`)
-    console.log(book)
-    return book
-  })
-  .catch(e => {
-    console.log(e)
-    reject(`Error: ${e.message || e}`);
-  })
-}
-
-const _getSimilarBooks = (url, res) => {
-  console.log('_getSimilarBooks ' + url)
-  return function() {
-    const d = Date.now()
-    console.log('call _getSimilarBooks function ' + url)
-    console.log(`--Called ${d}`)
-    let book
-  axios.get(url)
-    .then(gRes => {
-      // console.log(gRes.data)
-      const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
-      // res.json(json)
-      const sims = _toSimilars(get(json,'GoodreadsResponse.book.similar_books.book',[]))
-      book = _toBook(get(json, 'GoodreadsResponse.book', {}))
-      const similarPromises = sims.filter(b => b.isbn13).map( b => _getBook(b.isbn13))
-      // const similarPromises = sims.map( (b) => {
-        // return _getBook(b.isbn13)
-      // } )
-      return Promise.all(similarPromises)
-      // .then( s => {
-        // res.json( {
-          // book,
-          // similars
-        // })
-      // })
-      })
-      .then(similars => {
-        console.log('then values')
-        console.log(similars)
-        console.log('book')
-        console.log(book)
-        res.json( {
-          book,
-          similars
-        })
-        console.log('then values')
-      })
-    .catch(e => {
-      console.log('ERRROR!!!')
-      console.log(e)
-      return res.status(500).json(`Error: ${e.message || e}`);
-    })
-    .finally( () => {
-      console.log('finally')
-    })
+  let q = `title:${encodeURIComponent(title)}`
+  if (author) {
+    const q2 =` and authors:${author}`
+    q += encodeURIComponent(q2)
   }
+  let url = `https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=40&key=${key}`
+  return url
+}
+
+
+// sort books descending by ratings count
+const _sortBooksFn = (b1, b2) => {
+  let r1 = parseInt(get(b1, 'volumeInfo.ratingsCount','-1'))
+  if (isNaN(r1)) {
+    r1 = -1
+  }
+  let r2 = parseInt(get(b2, 'volumeInfo.ratingsCount','-1'))
+  if (isNaN(r2)) {
+    r2 = -1
+  }
+  // sort descending
+  if (r1 < r2) {
+    return 1
+  }
+  if (r1 > r2) {
+    return -1
+  }
+  return 0
 }
 
 /**
- * Allow fn to be called no more than every `ThrottleMS` milliseconds
- * @param fn - function to be called
+ * googlebooks api can return multiple books.  Find and return the best fit
+ * @param {string} url
+ * @param {string} title
+ * @return {Promise<AxiosResponse<any>>}
  * @private
  */
-const _throttleCall = (fn) => {
-  const now = Date.now()
-  const diff = now - lastCalledMS
-  console.log(`LCMS ${lastCalledMS}, ${now}, ${diff}`)
-  // if the time since the last call is > throttle time
-  if(diff > ThrottleMS) {
-    lastCalledMS = now
-    fn()
-    return
-  }
-
-  const waitTimeMS = ThrottleMS - diff
-  lastCalledMS = now + waitTimeMS
-  setTimeout( fn, ThrottleMS - diff + 50 )
-
+const _getBook = async (url, title) => {
+  return axios.get(url)
+  .then(gRes => {
+    const books = get(gRes,'data.items', [])
+    .filter( b => {
+      const t = get(b, 'volumeInfo.title','').toLowerCase()
+      if (!t.length) return false
+      if(t.length < title.length) {
+        return title.toLowerCase().includes(t.toLowerCase())
+      }
+      return t.toLowerCase().includes(title.toLowerCase())
+    })
+    if (!books.length) {
+      return {}
+    }
+    books.sort(_sortBooksFn)
+    return _toBook(books[0])
+  })
 }
 
-// Get similar books to isbn13 book
-router.route('/isbn/:isbn13').get( async (req, res) => {
-  const isbn13 = req.params.isbn13
-  if(!isbn13) {
-    return res.status(400).json('Error: required isbn13 not contained in request');
+// get googlebook by title
+router.route('/title/:title').get( async (req, res) => {
+  const title = req.params.title
+  const author = req.query.author || ''
+  if(!title) {
+    return res.status(400).json('Error: required title not contained in request');
   }
   try {
-    const b = await _getBook(isbn13)
+    const b = await _getBook(_getUrl(title, author), title)
     res.json(b)
   } catch (e) {
     return res.status(500).json(`Error: ${e.message || e}`);
