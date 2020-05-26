@@ -5,8 +5,8 @@ import '../Routes/Bookfinder/bookfinder.css';
 
 /**
  * Compare books and return `true` if they are essentially the same book.
- * @param {Object} b1
- * @param {Object} b2
+ * @param {Object} b1 - book to compare
+ * @param {Object} b2 - book to compare
  * @return {boolean} returns true if books match
  * @private
  */
@@ -31,11 +31,11 @@ const _sameBook = (b1, b2) => {
 /**
  * Display table of books similar to the select book
  * @param {Object} props - arrays of books to display
- * @return {*}
+ * @return {*} page displaying form
  * @constructor
  */
 function SimilarBooks(props) {
-  const {goodreadsBooks=[], googleBooks=[], amazonBooks=[]} = props
+  const {goodreadsBooks = [], googleBooks = [], amazonBooks = []} = props
   const [similarBooks, setSimilarBooks] = useState([]);
 
   // merge incoming books arrays

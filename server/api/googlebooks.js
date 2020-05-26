@@ -50,7 +50,7 @@ const _getUrl = (title, author) => {
   }
   let q = `title:${encodeURIComponent(title)}`
   if (author) {
-    const q2 =` and authors:${author}`
+    const q2 = ` and authors:${author}`
     q += encodeURIComponent(q2)
   }
   let url = `https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=40&key=${key}`
