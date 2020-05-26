@@ -29,8 +29,9 @@ const _sameBook = (b1, b2) => {
 function Bookfinder() {
   const [bookTitle, setBookTitle] = useState("");
   const [selectBooks, setSelectBooks] = useState([]);
-  const [selectedBook, setSelectedBook] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
   const [goodreadsBooks, setGoodreadsBooks] = useState([]);
+  const [goodreadsLoading, setGoodreadsLoading] = useState(false);
   const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
 
@@ -61,6 +62,8 @@ function Bookfinder() {
     setSelectBooks([])
     setGoodreadsBooks([])
     setGoogleBooks([])
+    setGoodreadsLoading(false)
+    setFindLoading(false)
     GooglebooksService.findBooks(bookTitle)
   }
   /**
@@ -80,6 +83,7 @@ function Bookfinder() {
 
   // Get books similar to 'title' from goodreads api
   const getSimilarBooksGoodreads = (title) => {
+    setGoodreadsLoading(true)
     GoodreadsService.getSimilars(title)
       .then((data) => {
         const books = data.similars
@@ -88,6 +92,9 @@ function Bookfinder() {
         books.push(data.book)
         setGoodreadsBooks(books)
       })
+    .finally( () => {
+      setGoodreadsLoading(false)
+    })
   }
 
   // Book is selected to find similars for
@@ -113,7 +120,24 @@ function Bookfinder() {
           <div className="book-title">{selectedBook.title}</div>
           <div className="author">{selectedBook.authors}</div>
         </div>
+        <Spinner
+          as="span"
+          animation="grow"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+        />Searching...
       </div>
+  }
+
+  let goodreadsSpinner
+  if (goodreadsLoading) {
+    goodreadsSpinner = <span><Spinner
+      as="span"
+      animation="border"
+      role="status"
+      aria-hidden="true"
+    /> Loading Similar Books...</span>
   }
 
   let findButton
@@ -167,9 +191,9 @@ function Bookfinder() {
                 )
               })}
             </ListGroup>
-            {selectedBookItem}
+            {goodreadsSpinner}
             <div>
-            <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
+              <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
             </div>
           </div>
         </div>
