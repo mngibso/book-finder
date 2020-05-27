@@ -78,7 +78,7 @@
     "lint": "npm run lintServer; npm run lintCSS",
     "lintCSS": "node_modules/.bin/stylelint --fix src/**/*",
     "lintServer": "node_modules/.bin/eslint --fix server/",
-    "heroku-postbuild": "npm install && npm run run build:dev"
+    "heroku-postbuild": "npm install && npm run run build:prod"
   }
 
 }
