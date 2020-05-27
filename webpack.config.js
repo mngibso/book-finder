@@ -96,7 +96,12 @@ module.exports = () => {
 
 			new WebpackBar(),
 
-			new webpack.DefinePlugin(envKeys)
+			new webpack.DefinePlugin({
+				'process.env': {
+					'API_URI': '"http://localhost:3000/api"'
+				}
+			})
+			// new webpack.DefinePlugin(envKeys)
 		]
 	}
 }
