@@ -10,7 +10,8 @@ export default function (templateConfig) {
 
                 <!-- Google Fonts -->
                 <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet preload">
-
+                
+                <link rel="shortcut icon" href="/favicon.ico">
                 <meta charset="UTF-8" />
                 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
