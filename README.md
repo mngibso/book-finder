@@ -2,7 +2,10 @@
 **This is a work in progress**
 
 ## About
-Given a book title, searches Google books, Goodreads and Amazon to find similar books you may like.
+Given a book title, searches Google books, Goodreads and Amazon (soon) to find similar books you may like.
+
+## Live Demo
+A live demo of the `master` branch build : https://book-finder-apl.herokuapp.com/
 
 ## Getting Started
 1. Get the repository `git clone https://github.com/mngibso/book-finder.git`
