@@ -66,7 +66,7 @@
     "webpackbar": "^2.6.1"
   },
   "engines": {
-    "node": ">=8.9.3"
+    "node": ">=12.17.0"
   },
   "scripts": {
     "start": "concurrently \"npm run wds\" \"npm run server\"",
@@ -81,5 +81,4 @@
     "lintServer": "node_modules/.bin/eslint --fix server/",
     "heroku-postbuild": "npm install && npm run build:prod"
   }
-
 }
