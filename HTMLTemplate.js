@@ -21,7 +21,10 @@ export default function (templateConfig) {
                 <meta name="theme-color" content="#346CA1">
 
                 <!-- Title -->
-                <meta name="React-Stack-2" content="">
+                <meta name="React-Stack-2" content="Discover Greate Books!">
+                <meta property="og:title" content="Discover Greate Books!"/>
+                <meta property="og:image" content="/images/books-corner.jpg"/>
+                <meta property="og:description" content="Discover more books like the books you love."/>
             </head>
 
             <body>
