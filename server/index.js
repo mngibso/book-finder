@@ -44,11 +44,12 @@ if (process.env.DB_URI) {
 const cacheTime = 172800000; // 2 Days in ms - Tells clients to cache static files
 
 app.use(cors());
+/*
 app.use(helmet()); // Sets some good default headers
 app.use(helmet.hsts({
 	maxAge: 0
 }))
-
+*/
 app.use(compression()); // Enables gzip compression
 app.use(express.json());
 //app.use(bodyParser.urlencoded({ extended: true }));
