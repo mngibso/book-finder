@@ -4,8 +4,8 @@ const axios = require('axios')
 
 /**
  * extract the isbn13 from a google book
- * @param {Object} book
- * @return {string} isbn13
+ * @param {Object} book representation
+ * @return {string} isbn13 book identifier
  * @private
  */
 const _getISBN13 = (book) => {
@@ -21,8 +21,8 @@ const _getISBN13 = (book) => {
 
 /**
  * simplify book format
- * @param {Object} book
- * @return {{averageRating: *, isbn13: string, link: *, ratingsCount: *, title: *, authors: *}}
+ * @param {Object} book GR book representation
+ * @return {{averageRating: *, isbn13: string, link: *, ratingsCount: *, title: *, authors: *}} simple book representation
  * @private
  */
 const _toBook = (book) => {
@@ -39,9 +39,9 @@ const _toBook = (book) => {
 
 /**
  * return a googlebooks api url
- * @param {string} title
- * @param {string} author
- * @return {string} url
+ * @param {string} title book title
+ * @param {string} author book author
+ * @return {string} url api url
  * @private
  */
 const _getUrl = (title, author) => {
@@ -81,9 +81,9 @@ const _sortBooksFn = (b1, b2) => {
 
 /**
  * googlebooks api can return multiple books.  Find and return the best fit
- * @param {string} url
- * @param {string} title
- * @return {Promise<AxiosResponse<any>>}
+ * @param {string} url - api call url
+ * @param {string} title - book title
+ * @return {Promise<AxiosResponse<any>>} - promise to return book
  * @private
  */
 const _getBook = async (url, title) => {

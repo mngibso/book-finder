@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import get from 'lodash/get'
 import find from 'lodash/find'
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
 import '../Routes/Bookfinder/bookfinder.css';
 
 /**
@@ -77,55 +79,59 @@ function SimilarBooks(props) {
     setSimilarBooks(sims)
   }
   return (
-    <div>
-      {similarBooks.length > 0 &&
-      <table className="dataTable book-comparison-table">
-        <colgroup>
-          <col className="amazon"/>
-          <col span="2" className="goodreads"/>
-          <col className="google"/>
-          <col className="google last"/>
-        </colgroup>
-        <thead>
-        <tr>
-          <th rowSpan="2">Rank</th>
-          <th rowSpan="2">Comp Score</th>
-          <th rowSpan="2" className="book-info">Title</th>
-          <th><img src="images/logo_amazon.png" alt="Logo: Amazon" className="th-logo"/></th>
-          <th colSpan="2"><img src="images/logo_goodreads2.png" alt="Logo: GoodReads" className="th-logo"/></th>
-          <th colSpan="2"><img src="images/logo_google.png" alt="Logo: Google" className="th-logo"/></th>
-        </tr>
-        <tr>
-          <th>Sales Rank</th>
-          <th>Ratings Count</th>
-          <th>Avg. Rating</th>
-          <th>Ratings Count</th>
-          <th>Avg. Rating</th>
-        </tr>
-        </thead>
-        <tbody>
-        {similarBooks.map(book => (
-          <tr key={book.count}>
-            <td>{book.count}</td>
-            <td><span className="comp-score">?</span></td>
-            <td className="book-info">
-              <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
-              <div>
-                <strong>{book.title}</strong>
-                {book.authors}
-              </div>
-            </td>
-            <td>{book.amazonBook.salesRank}</td>
-            <td>{book.goodreadsBook.ratingsCount}</td>
-            <td>{book.goodreadsBook.averageRating}</td>
-            <td>{book.googleBook.ratingsCount}</td>
-            <td>{book.googleBook.averageRating}</td>
-          </tr>
-        ))}
-        </tbody>
-      </table>
+    <Container>
+      { similarBooks.length > 0 &&
+      <Card className="mb-3">
+        <div className="card-body">
+          <table className="dataTable book-comparison-table">
+            <colgroup>
+              <col className="amazon"/>
+              <col span="2" className="goodreads"/>
+              <col className="google"/>
+              <col className="google last"/>
+            </colgroup>
+            <thead>
+            <tr>
+              <th rowSpan="2">Rank</th>
+              <th rowSpan="2">Comp Score</th>
+              <th rowSpan="2" className="book-info">Title</th>
+              <th><img src="images/logo_amazon.png" alt="Logo: Amazon" className="th-logo"/></th>
+              <th colSpan="2"><img src="images/logo_goodreads2.png" alt="Logo: GoodReads" className="th-logo"/></th>
+              <th colSpan="2"><img src="images/logo_google.png" alt="Logo: Google" className="th-logo"/></th>
+            </tr>
+            <tr>
+              <th>Sales Rank</th>
+              <th>Ratings Count</th>
+              <th>Avg. Rating</th>
+              <th>Ratings Count</th>
+              <th>Avg. Rating</th>
+            </tr>
+            </thead>
+            <tbody>
+            {similarBooks.map(book => (
+              <tr key={book.count}>
+                <td>{book.count}</td>
+                <td><span className="comp-score">?</span></td>
+                <td className="book-info">
+                  <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
+                  <div>
+                    <strong>{book.title}</strong>
+                    {book.authors}
+                  </div>
+                </td>
+                <td>{book.amazonBook.salesRank}</td>
+                <td>{book.goodreadsBook.ratingsCount}</td>
+                <td>{book.goodreadsBook.averageRating}</td>
+                <td>{book.googleBook.ratingsCount}</td>
+                <td>{book.googleBook.averageRating}</td>
+              </tr>
+            ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
       }
-    </div>
+    </Container>
   );
 }
 export default SimilarBooks;

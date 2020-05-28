@@ -65,7 +65,7 @@ function Bookfinder() {
     setGoogleBooks([])
     setGoodreadsLoading(false)
     setFindLoading(false)
-    GooglebooksService.findBooks(bookTitle)
+    // GooglebooksService.findBooks(bookTitle)
   }
   /**
    * search books with given title
@@ -73,8 +73,8 @@ function Bookfinder() {
    * @returns {undefined}
    */
   const findClick = (evt) => {
-    setFindLoading(true)
     _reset()
+    setFindLoading(true)
     GooglebooksService.findBooks(bookTitle)
     .then((sBooks) => {
       setSelectBooks(sBooks)
@@ -135,6 +135,7 @@ function Bookfinder() {
   let goodreadsSpinner
   if (goodreadsLoading) {
     goodreadsSpinner = <span><Spinner
+      className="mt-2"
       as="span"
       animation="border"
       role="status"
@@ -159,11 +160,10 @@ function Bookfinder() {
   return (
     <Container className="home">
       <h1>Book Finder</h1>
-      <section className="book-comparison-top">
         <div className="container-fluid">
-          <h2 className="section-title">Book Comparison Engine</h2>
+          <h4 className="section-title">Discover books that reader's of your favorite books enjoy.</h4>
           <div className="book-search">
-            <Card>
+            <Card className="mb-3">
               <div className="card-body">
                 <div className="card-text">Enter the title of a favorite book</div>
                 <InputGroup className="mb-3">
@@ -178,15 +178,13 @@ function Bookfinder() {
             </Card>
           </div>
         </div>
-      </section>
 
-      <section>
-        <div className="comparison-report">
-            {selectBooks.length
-              ? <h3>Select a Book</h3>
-              : ''
-            }
-            <ListGroup>
+      {selectBooks.length > 0 &&
+      <div className="container-fluid">
+        <Card className="mb-3">
+          <div className={"card-body"}>
+          <div className="card-text">Select your book</div>
+          <ListGroup>
               {selectBooks.map((b, idx) => {
                 return (
                   <ListGroup.Item key={idx} eventKey={b.isbn13} as="button" action onClick={selectBook}
@@ -201,11 +199,15 @@ function Bookfinder() {
               })}
             </ListGroup>
             {goodreadsSpinner}
-            <div>
-              <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
-            </div>
           </div>
-      </section>
+        </Card>
+      </div>
+      }
+        <div className="comparison-report">
+        </div>
+        <div>
+          <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
+        </div>
 </Container>
   );
 }

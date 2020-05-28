@@ -9,7 +9,7 @@ const ThrottleMS = 1000
 /**
  * return authors as an array of strings
  * @param {Object[]} authors - authors from goodreads book
- * @return {string[]}
+ * @return {string[]} array of author names
  * @private
  */
 const _toAuthors = (authors) => {
@@ -37,7 +37,7 @@ const _toAuthors = (authors) => {
 /**
  * Return a more useful book representation given a goodreads book.
  * @param {Object} book - A book representation returned from goodreads call
- * @return {{thumbnail: *, subTitle: *, averageRating: *, isbn13: *, link: *, ratingsCount: *, id: *, title: *, authors: []}}
+ * @return {{thumbnail: *, subTitle: *, averageRating: *, isbn13: *, link: *, ratingsCount: *, id: *, title: *, authors: []}} book representation
  * @private
  */
 const _toBook = (book) => {
@@ -61,7 +61,7 @@ const _toBook = (book) => {
 
 /**
  * Return an api url to get book by isbn13
- * @param {string} isbn13
+ * @param {string} isbn13 - book identifier
  * @return {string} goodreads api url
  * @private
  */
@@ -75,7 +75,7 @@ const _getUrl = (isbn13) => {
 
 /**
  * Return an api url to get book by title
- * @param {string} title
+ * @param {string} title book title
  * @return {string} goodreads api url
  * @private
  */
@@ -89,7 +89,7 @@ const _getTitleUrl = (title) => {
 
 /**
  * Return an api url to get book by goodreads id
- * @param {string} id
+ * @param {string} id goodreads book identifier
  * @return {string} goodreads api url
  * @private
  */
@@ -105,8 +105,8 @@ const _getIdUrl = (id) => {
 
 /**
  * Convert array of GR books to a simpler structure
- * @param {Object[]} books
- * @return {Object[]}
+ * @param {Object[]} books returned by GR api call
+ * @return {Object[]} array of book representations
  * @private
  */
 const _toSimilars = (books) => {
@@ -115,8 +115,8 @@ const _toSimilars = (books) => {
 
 /**
  * Call the GR api to get a book
- * @param {string} url
- * @return {Promise<unknown>}
+ * @param {string} url - api url
+ * @return {Promise<unknown>} promise to return a book from GR
  * @private
  */
 const _getBook = (url) => {
@@ -142,9 +142,9 @@ const _getBook = (url) => {
 
 /**
  * Return a function to get get an array of books similar to that obtained by the url
- * @param {string} url
- * @param {Object} res
- * @return {function(...[*]=)}
+ * @param {string} url - api url
+ * @param {Object} res - response object
+ * @return {function(...[*]=)} a function that uses GR api to obtain books
  * @private
  */
 const _getSimilarBooks = (url, res) => {
@@ -182,6 +182,7 @@ const _getSimilarBooks = (url, res) => {
 /**
  * Allow fn to be called no more than every `ThrottleMS` milliseconds
  * @param {AnyFunction} fn - function to be called
+ * @return {undefined}
  * @private
  */
 const _throttleCall = (fn) => {
