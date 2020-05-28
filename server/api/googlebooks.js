@@ -33,6 +33,7 @@ const _toBook = (book) => {
     isbn13:  _getISBN13(book),
     authors:  get(book, 'volumeInfo.authors',[]),
     link:  get(book, 'volumeInfo.infoLink',''),
+    thumbnail:  get(book, 'volumeInfo.imageLinks.smallThumbnail',''),
   }
 }
 

@@ -5,6 +5,7 @@ import find from 'lodash/find'
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
 import FormControl from 'react-bootstrap/FormControl';
 import InputGroup from 'react-bootstrap/InputGroup';
 import '../Routes/Bookfinder/bookfinder.css';
@@ -84,6 +85,7 @@ function Bookfinder() {
   // Get books similar to 'title' from goodreads api
   const getSimilarBooksGoodreads = (title) => {
     setGoodreadsLoading(true)
+    setGoodreadsBooks([])
     GoodreadsService.getSimilars(title)
       .then((data) => {
         const books = data.similars
@@ -161,18 +163,25 @@ function Bookfinder() {
         <div className="container-fluid">
           <h2 className="section-title">Book Comparison Engine</h2>
           <div className="book-search">
-            <InputGroup className="mb-3">
-              <InputGroup.Prepend>
-                {findButton}
-              </InputGroup.Prepend>
-              <FormControl placeholder={"Enter a Book Title"}
+            <Card>
+              <div className="card-body">
+                <div className="card-text">Enter the title of a favorite book</div>
+                <InputGroup className="mb-3">
+                  <InputGroup.Prepend>
+                  {findButton}
+                  </InputGroup.Prepend>
+                  <FormControl placeholder={"Enter a Book Title"}
                            value={bookTitle}
-                           onChange={e => setBookTitle(e.target.value)}
-              />
-            </InputGroup>
-
+                           onChange={e => setBookTitle(e.target.value)} />
+                </InputGroup>
+              </div>
+            </Card>
           </div>
-          <div className="comparison-report">
+        </div>
+      </section>
+
+      <section>
+        <div className="comparison-report">
             {selectBooks.length
               ? <h3>Select a Book</h3>
               : ''
@@ -196,10 +205,8 @@ function Bookfinder() {
               <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
             </div>
           </div>
-        </div>
-
       </section>
-    </Container>
+</Container>
   );
 }
 export default Bookfinder;

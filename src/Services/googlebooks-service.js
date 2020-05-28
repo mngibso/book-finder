@@ -10,10 +10,8 @@ import uniqWith from "lodash/uniqWith";
 const _getISBN13 = b => {
   const isbn13 = get(b, 'volumeInfo.industryIdentifiers', [])
   .filter(i => {
-    console.log(i)
     return i.type === 'ISBN_13'
   })
-  console.log(isbn13)
   if (isbn13.length) {
     return isbn13[0].identifier
   }

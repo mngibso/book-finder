@@ -59,7 +59,7 @@ function SimilarBooks(props) {
       }) || { averageRating: 'N/A', ratingsCount: 'N/A'}
       const amazonBook = find(amazonBooks, ab => {
         return _sameBook(ab, gr)
-      }) || { salesRank: 'N/A'}
+      }) || { salesRank: 'TBD'}
       let title = gr.title
       if (gr.subTitle) {
         title = `${title} : ${gr.subTitle}`
@@ -107,9 +107,9 @@ function SimilarBooks(props) {
         {similarBooks.map(book => (
           <tr key={book.count}>
             <td>{book.count}</td>
-            <td><span className="comp-score">47</span></td>
+            <td><span className="comp-score">?</span></td>
             <td className="book-info">
-              <img src={book.goodreadsBook.thumbnail}/>
+              <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
               <div>
                 <strong>{book.title}</strong>
                 {book.authors}
