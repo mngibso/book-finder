@@ -1,13 +1,25 @@
+#root {
+	background-image: url("/images/books-corner.jpg");
+    min-height: 800px;
+}
+.card {
+	opacity: .95;
+}
 .home {
 	margin-left: 60px;
 }
 
 .home h1 {
 	text-align: center;
+	color: #f5f5f5;
 }
 
 .home h2 {
 	margin-bottom: 15px;
+}
+.home h4 {
+	margin-bottom: 15px;
+	color: #f5f5f5;
 }
 
 .home ul li {
