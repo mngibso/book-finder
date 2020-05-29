@@ -29,12 +29,13 @@ export default function (templateConfig) {
             </head>
 
             <body>
-
                 <noscript>
                     <h1>Please Enable JS in your browser in order to continue</h1>
                 </noscript>
 
+                <div class="bg">
                 <div id='root'></div>
+                </div>
                 <script src='/main.js'></script>
             </body>
         </html>

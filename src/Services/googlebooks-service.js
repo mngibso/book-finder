@@ -36,6 +36,9 @@ class GooglebooksService {
     const url = `https://www.googleapis.com/books/v1/volumes?q=title:${encodeURIComponent(bookTitle)}`
     return axios.get(url)
     .then(res => {
+      if(!res.data.items) {
+        return []
+      }
       const sb = res.data.items.map(b => {
         return {
           thumbnail: get(b, 'volumeInfo.imageLinks.smallThumbnail', 'images/default_book_cover.jpg'),

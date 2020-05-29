@@ -65,7 +65,6 @@ function Bookfinder() {
     setGoogleBooks([])
     setGoodreadsLoading(false)
     setFindLoading(false)
-    // GooglebooksService.findBooks(bookTitle)
   }
   /**
    * search books with given title
@@ -172,6 +171,7 @@ function Bookfinder() {
                   </InputGroup.Prepend>
                   <FormControl placeholder={"Enter a Book Title"}
                            value={bookTitle}
+                           onKeyPress={e=> { if(e.key === 'Enter') findClick(e) }}
                            onChange={e => setBookTitle(e.target.value)} />
                 </InputGroup>
               </div>
