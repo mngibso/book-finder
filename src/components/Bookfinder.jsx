@@ -33,11 +33,14 @@ function Bookfinder() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [goodreadsBooks, setGoodreadsBooks] = useState([]);
   const [goodreadsLoading, setGoodreadsLoading] = useState(false);
+  const [amazonLoading, setIdreambooksLoading] = useState(false);
+  const [amazonBooks, setIdreambooksBooks] = useState([]);
   const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
 
   // When we obtain goodreadsBooks, get ratings for googlebooks
   useEffect(() => {
+    console.log(`GoogleBooks ${googleBooks.length}`)
     const promises = goodreadsBooks.filter( bk1 => {
       return googleBooks.findIndex( (bk2) => {
         return _sameBook(bk1, bk2)
@@ -49,11 +52,11 @@ function Bookfinder() {
     })
     Promise.all(promises)
     .then(( gglBooks ) => {
-      setGoogleBooks(gglBooks.filter(b => b.title))
+      setGoogleBooks([...googleBooks, ...gglBooks.filter(b => b.title)])
     })
   },[goodreadsBooks]);
 
-  /**
+/**
    * clear saved books
    * @private
    * @returns {undefined}
@@ -63,7 +66,9 @@ function Bookfinder() {
     setSelectBooks([])
     setGoodreadsBooks([])
     setGoogleBooks([])
+    setIdreambooksBooks([])
     setGoodreadsLoading(false)
+    setIdreambooksLoading(false)
     setFindLoading(false)
   }
   /**
@@ -81,6 +86,17 @@ function Bookfinder() {
     .finally(() => setFindLoading(false))
   }
 
+  const getGoodreadsRatings = books => {
+    for (const book of books) {
+      GoodreadsService.getBookById(book.id)
+      .then( (resp) => {
+        goodreadsBooks.push(resp.book)
+        setGoodreadsBooks([...goodreadsBooks])
+        console.log(goodreadsBooks)
+      })
+    }
+  }
+
   // Get books similar to 'title' from goodreads api
   const getSimilarBooksGoodreads = (title) => {
     setGoodreadsLoading(true)
@@ -88,15 +104,37 @@ function Bookfinder() {
     GoodreadsService.getSimilars(title)
       .then((data) => {
         const books = data.similars
+        getGoodreadsRatings(books)
+        // get ratings for each similar
         // add the book we're search for to the similars list
         data.book.selected = true
-        books.push(data.book)
-        setGoodreadsBooks(books)
+        //books.push(data.book)
+        setGoodreadsBooks([data.book])
       })
     .finally( () => {
       setGoodreadsLoading(false)
     })
   }
+
+  // Get books similar to 'title' from amazon api
+  /*
+  const getSimilarBooksIdreambooks = (title) => {
+    //setIdreamBooksLoading(true)
+    setIdreambooksBooks([])
+    IdreambooksService.getSimilars(title)
+    .then((data) => {
+      const books = data.similars
+      // add the book we're search for to the similars list
+      data.book.selected = true
+      books.push(data.book)
+      setGoodreadsBooks(books)
+    })
+    .finally( () => {
+      setGoodreadsLoading(false)
+    })
+  }
+
+   */
 
   // Book is selected to find similars for
   const selectBook = (evt) => {
@@ -109,6 +147,7 @@ function Bookfinder() {
     setSelectBooks(selectBooks.filter(b => b.isbn13 === isbn13))
     // get goodreads
     getSimilarBooksGoodreads(selectedBook.title)
+    //getDreambooks(selectedBook.title)
     // ToDo: get amazon -
   }
 

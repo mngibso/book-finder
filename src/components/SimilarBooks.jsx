@@ -43,6 +43,7 @@ function SimilarBooks(props) {
   // merge incoming books arrays
   useEffect(() => {
     // if (amazonBooks.length || goodreadsBooks.length || googleBooks.length) { _merge() }
+    console.log(`merging ${goodreadsBooks.length}, ${googleBooks.length}`)
     if (goodreadsBooks.length || googleBooks.length) {
       _merge()
     } else {
@@ -76,6 +77,7 @@ function SimilarBooks(props) {
         goodreadsBook: gr,
       })
     }
+    console.log(sims)
     setSimilarBooks(sims)
   }
   return (
