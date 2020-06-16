@@ -16,17 +16,27 @@ const _sameBook = (b1, b2) => {
   if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
     return true
   }
-  const a1 = get(b1, 'authors', []).sort()
-  const a2 = get(b2, 'authors', []).sort()
+  const a1 = get(b1, 'authors', [])
+  .map( auth => {
+    return auth.split(' ')
+    .join('')
+  }).sort().join(':').toLowerCase()
+  const a2 = get(b2, 'authors', [])
+  .map( auth => {
+    return auth.split(' ')
+    .join('')
+  }).sort().join(':').toLowerCase()
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   let titlesMatch
+  console.log(`${b1Title}, ${b2Title}`)
   if (b1Title.length > b2Title.length) {
       titlesMatch = b1Title.includes(b2Title)
   } else {
     titlesMatch = b2Title.includes(b1Title)
   }
-  return titlesMatch && a1.join(':') === a2.join(':')
+  //return titlesMatch && a1.join(':') === a2.join(':')
+  return titlesMatch && a1 === a2
 }
 
 
@@ -42,8 +52,6 @@ function SimilarBooks(props) {
 
   // merge incoming books arrays
   useEffect(() => {
-    // if (amazonBooks.length || goodreadsBooks.length || googleBooks.length) { _merge() }
-    console.log(`merging ${goodreadsBooks.length}, ${googleBooks.length}`)
     if (goodreadsBooks.length || googleBooks.length) {
       _merge()
     } else {
