@@ -7,19 +7,18 @@ const axios = require('axios')
 /**
  * simplify book format
  * @param {Object} book GR book representation
- * @return {{averageRating: *, isbn13: string, link: *, ratingsCount: *, title: *, authors: *}} simple book representation
+ * @return {{averageRating: *, link: *, ratingsCount: *, title: *, authors: *}} simple book representation
  * @private
  */
-const _toBook = (book) => {
+const _toBook = (book, title) => {
   let authors = get(book, 'author',[])
-  if (authors) {
+  if (authors && !Array.isArray(authors)) {
     authors = [authors]
   }
   return {
-    averageRating: get(book, 'rating','0'),
-    ratingCount: get(book, 'review_count','0'),
-    title:  get(book, 'title',''),
-    isbn13:  _getISBN13(book),
+    averageRating: get(book, 'rating',0),
+    ratingsCount: get(book, 'review_count',0),
+    title:  get(book, 'title',title),
     authors,
     link:  get(book, 'detail_link',''),
   }
@@ -37,7 +36,7 @@ const _getUrl = (title) => {
     throw new Error('Error: required "IDREAMBOOKS_API_KEY" not defined in env')
   }
   let q = `${encodeURIComponent(title)}`
-  let url = `https://idreambooks.com/api/books/reviews.xml?q=${q}&key=${key}`
+  let url = `https://idreambooks.com/api/books/reviews.json?q=${q}&key=${key}`
   return url
 }
 
@@ -54,7 +53,8 @@ const _getBook = async (title) => {
   return axios.get(url)
   .then(gRes => {
     const book = get(gRes,'data.book', {})
-    return _toBook(book)
+    console.log(title)
+    return _toBook(book, title)
   })
 }
 
@@ -66,6 +66,7 @@ router.route('/title/:title').get( async (req, res) => {
   }
   try {
     const b = await _getBook(title)
+    console.log(b)
     res.json(b)
   } catch (e) {
     return res.status(500).json(`Error: ${e.message || e}`);

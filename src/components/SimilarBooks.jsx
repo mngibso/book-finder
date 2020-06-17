@@ -29,7 +29,6 @@ const _sameBook = (b1, b2) => {
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   let titlesMatch
-  console.log(`${b1Title}, ${b2Title}`)
   if (b1Title.length > b2Title.length) {
       titlesMatch = b1Title.includes(b2Title)
   } else {
@@ -47,17 +46,18 @@ const _sameBook = (b1, b2) => {
  * @constructor
  */
 function SimilarBooks(props) {
-  const {goodreadsBooks = [], googleBooks = [], amazonBooks = []} = props
+  const {goodreadsBooks = [], googleBooks = [], idreambooks = []} = props
   const [similarBooks, setSimilarBooks] = useState([]);
 
   // merge incoming books arrays
   useEffect(() => {
-    if (goodreadsBooks.length || googleBooks.length) {
+    console.log(`merge  ${goodreadsBooks.length} ${googleBooks.length} ${idreambooks.length}`)
+    if (goodreadsBooks.length || googleBooks.length || idreambooks.length) {
       _merge()
     } else {
       setSimilarBooks([])
     }
-  },[goodreadsBooks, googleBooks]);
+  },[goodreadsBooks, googleBooks, idreambooks]);
 
   // given the books arrays, merge them as best as possible to give ratings in table
   const _merge = () => {
@@ -67,10 +67,10 @@ function SimilarBooks(props) {
       count++
       const googleBook = find(googleBooks, gb => {
         return _sameBook(gb, gr)
-      }) || { averageRating: 'N/A', ratingsCount: 'N/A'}
-      const amazonBook = find(amazonBooks, ab => {
-        return _sameBook(ab, gr)
-      }) || { salesRank: 'TBD'}
+      }) || {averageRating: 'N/A', ratingsCount: 'N/A'}
+      const idreambook = find(idreambooks, ib => {
+        return _sameBook(ib, gr)
+      }) || {averageRating: '0', ratingsCount: '0'}
       let title = gr.title
       if (gr.subTitle) {
         title = `${title} : ${gr.subTitle}`
@@ -81,11 +81,10 @@ function SimilarBooks(props) {
         title,
         isbn13: gr.isbn13,
         googleBook,
-        amazonBook,
+        idreambook,
         goodreadsBook: gr,
       })
     }
-    console.log(sims)
     setSimilarBooks(sims)
   }
   return (
@@ -129,7 +128,7 @@ function SimilarBooks(props) {
                     {book.authors}
                   </div>
                 </td>
-                <td>{book.amazonBook.salesRank}</td>
+                <td>{book.idreambook.ratingsCount}</td>
                 <td>{book.goodreadsBook.ratingsCount}</td>
                 <td>{book.goodreadsBook.averageRating}</td>
                 <td>{book.googleBook.ratingsCount}</td>
