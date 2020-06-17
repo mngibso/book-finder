@@ -174,6 +174,7 @@ function Bookfinder() {
                            onKeyPress={e=> { if(e.key === 'Enter') findClick(e) }}
                            onChange={e => setBookTitle(e.target.value)} />
                 </InputGroup>
+                <img src="/images/poweredbygoogle.png" />
               </div>
             </Card>
           </div>
