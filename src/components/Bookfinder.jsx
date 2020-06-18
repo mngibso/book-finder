@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import Spinner from 'react-bootstrap/Spinner'
-import uniq from 'lodash/uniq'
 import get from 'lodash/get'
 import find from 'lodash/find'
 import Button from 'react-bootstrap/Button';
@@ -278,9 +277,7 @@ function Bookfinder() {
         </Card>
       </div>
       }
-        <div>
-        <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks} idreambooks={idreambooks}></SimilarBooks>
-        </div>
+      <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks} idreambooks={idreambooks}></SimilarBooks>
 </Container>
   );
 }

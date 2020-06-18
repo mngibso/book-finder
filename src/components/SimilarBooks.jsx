@@ -16,6 +16,9 @@ const _sameBook = (b1, b2) => {
   if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
     return true
   }
+  if (!b1.title || !b2.title) {
+    return false
+  }
   const a1 = get(b1, 'authors', [])
   .map( auth => {
     return auth.split(' ')
@@ -88,7 +91,7 @@ function SimilarBooks(props) {
     setSimilarBooks(sims)
   }
   return (
-    <Container style={similarBooks.length > 0 ? {} : {display: "none"}} >
+    <div className="container-fluid" style={similarBooks.length > 0 ? {} : {display: "none"}} >
       <Card className="mb-3">
         <div className="card-body">
           <table className="dataTable book-comparison-table">
@@ -128,15 +131,16 @@ function SimilarBooks(props) {
                 <td className="book-info">
                   <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
                   <div>
-                    <strong>{book.title}</strong>
+                    <strong>{book.title.split('(')[0]}</strong>
                     {book.authors}
                   </div>
                 </td>
                 <td>{book.idreambook.ratingsCount}</td>
-                <td>{book.idreambook.averageRating}</td>
-                <td>{book.goodreadsBook.ratingsCount}</td>
+                <td>{parseInt(book.idreambook.averageRating) === 0 ? "N/A" : `${book.idreambook.averageRating}/100`}</td>
+                <td>{parseInt(book.goodreadsBook.ratingsCount).toLocaleString()}</td>
                 <td>{book.goodreadsBook.averageRating}</td>
-                <td>{book.googleBook.ratingsCount}</td>
+                <td>{isNaN(parseInt(book.googleBook.ratingsCount)) ?
+                  book.googleBook.ratingsCount : parseInt(book.googleBook.ratingsCount).toLocaleString()}</td>
                 <td>{book.googleBook.averageRating}</td>
               </tr>
             ))}
@@ -145,7 +149,7 @@ function SimilarBooks(props) {
           </table>
         </div>
       </Card>
-    </Container>
+    </div>
   );
 }
 export default SimilarBooks;

@@ -35,8 +35,8 @@ div.idreambooks {
 }
 .home {
 	margin-left: 60px;
+	max-width: 1250px;
 }
-
 .home h1 {
 	text-align: center;
 	color: #f5f5f5;
@@ -74,7 +74,7 @@ button.find { min-width: 200px; }
 .selected-book > .book-cover { max-width: 87px; padding: 4px; border: 1px solid #ddd; float: left; }
 .selected-book .book-title { font-weight: bold; }
 /* COMPARISON TABLE */
-table.dataTable.book-comparison-table { margin-bottom: 30px; width: 100%; border-collapse: collapse; border-top: 1px solid #ddd; }
+table.dataTable.book-comparison-table { margin-bottom: 30px; max-width: 1250px; border-collapse: collapse; border-top: 1px solid #ddd; }
 table.dataTable.book-comparison-table th { text-align: center; border-bottom: 1px solid #ddd; padding: 10px; vertical-align: bottom; font-weight: normal }
 table.dataTable.book-comparison-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: center; vertical-align: middle; }
 
