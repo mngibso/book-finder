@@ -15,11 +15,23 @@ body, html {
 	background-repeat: no-repeat;
 	background-size: cover;
 }
+
 #root {
     min-height: 800px;
 }
+col {
+	border-right: 1px solid #eee;
+}
+div.idreambooks {
+	font-family: Bellota;
+	font-size: 14px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #0099cb;
+	text-shadow: 1px 0 0 #0099cb;
+}
 .card {
-	opacity: .95;
+	opacity: .98;
 }
 .home {
 	margin-left: 60px;
@@ -88,11 +100,11 @@ span.comp-score { margin-right: 5px; width: 32px; height: 32px; background: #fe3
 	border-radius: 50%; font-size: 14px; color: #fff; display: inline-block; line-height: 32px; text-align: center;}
 span.comp-score + a { font-size: 12px; }
 
-table.dataTable.book-comparison-table col.amazon,
-table.dataTable.book-comparison-table col.google { background: #f9f9f9; border-bottom: 1px solid #ddd; border-right: 1px solid #eee; }
-table.dataTable.book-comparison-table col.goodreads { background: #fff; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
+table.dataTable.book-comparison-table col.idreambooks,
+table.dataTable.book-comparison-table col.goodreads { background: #f9f9f9; border-bottom: 1px solid #ddd; border-right: 1px solid #eee; }
+table.dataTable.book-comparison-table col.google { background: #fff; border-bottom: 1px solid #eee; border-right: 1px solid #eee; }
 
-table.dataTable.book-comparison-table col.amazon { border-left: 1px solid #eee; }
+table.dataTable.book-comparison-table col.idreambooks { border-left: 1px solid #eee; }
 
 table.dataTable.book-comparison-table tbody tr { background: none; }
 table.dataTable.book-comparison-table col.google.last { border-right: 0; }

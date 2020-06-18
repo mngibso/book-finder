@@ -127,8 +127,7 @@ function Bookfinder() {
     for (const book of books) {
       GoodreadsService.getBookById(book.id)
       .then( (resp) => {
-        goodreadsBooks.push(resp.book)
-        setGoodreadsBooks(uniq(goodreadsBooks))
+        setGoodreadsBooks( goodreadsBooks => [...goodreadsBooks, resp.book])
       })
     }
   }
@@ -279,10 +278,8 @@ function Bookfinder() {
         </Card>
       </div>
       }
-        <div className="comparison-report">
-        </div>
         <div>
-          <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks} idreambooks={idreambooks}></SimilarBooks>
+        <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks} idreambooks={idreambooks}></SimilarBooks>
         </div>
 </Container>
   );

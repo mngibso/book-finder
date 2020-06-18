@@ -88,13 +88,14 @@ function SimilarBooks(props) {
     setSimilarBooks(sims)
   }
   return (
-    <Container>
-      { similarBooks.length > 0 &&
+    <Container style={similarBooks.length > 0 ? {} : {display: "none"}} >
       <Card className="mb-3">
         <div className="card-body">
           <table className="dataTable book-comparison-table">
             <colgroup>
-              <col className="amazon"/>
+              <col span="2" className="goodreads"/>
+              <col/>
+              <col span="2" />
               <col span="2" className="goodreads"/>
               <col className="google"/>
               <col className="google last"/>
@@ -104,18 +105,21 @@ function SimilarBooks(props) {
               <th rowSpan="2">Rank</th>
               <th rowSpan="2">Comp Score</th>
               <th rowSpan="2" className="book-info">Title</th>
-              <th><img src="images/logo_amazon.png" alt="Logo: Amazon" className="th-logo"/></th>
+              <th colSpan="2"><img src="images/idreambooks-logo.png" alt="Logo: Idreambooks" className="th-logo"/>
+                <div className="idreambooks">iDreamBooks : Book Reviews from Critics</div></th>
               <th colSpan="2"><img src="images/logo_goodreads2.png" alt="Logo: GoodReads" className="th-logo"/></th>
               <th colSpan="2"><img src="images/logo_google.png" alt="Logo: Google" className="th-logo"/></th>
             </tr>
             <tr>
-              <th>Sales Rank</th>
+              <th>Reviews</th>
+              <th>Average Score</th>
               <th>Ratings Count</th>
               <th>Avg. Rating</th>
               <th>Ratings Count</th>
               <th>Avg. Rating</th>
             </tr>
             </thead>
+            { similarBooks.length > 0 &&
             <tbody>
             {similarBooks.map(book => (
               <tr key={book.count}>
@@ -129,6 +133,7 @@ function SimilarBooks(props) {
                   </div>
                 </td>
                 <td>{book.idreambook.ratingsCount}</td>
+                <td>{book.idreambook.averageRating}</td>
                 <td>{book.goodreadsBook.ratingsCount}</td>
                 <td>{book.goodreadsBook.averageRating}</td>
                 <td>{book.googleBook.ratingsCount}</td>
@@ -136,10 +141,10 @@ function SimilarBooks(props) {
               </tr>
             ))}
             </tbody>
+            }
           </table>
         </div>
       </Card>
-      }
     </Container>
   );
 }
