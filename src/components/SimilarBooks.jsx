@@ -1,15 +1,47 @@
 import React, {useState, useEffect} from "react";
 import get from 'lodash/get'
+import sortBy from 'lodash/sortBy'
 import find from 'lodash/find'
-import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 import '../Routes/Bookfinder/bookfinder.css';
+
+const MaxRating = 100
+const MinRating = 0
+
+const _float = value => {
+  const f = parseFloat(value)
+  if (isNaN(f)) {
+    return 0.0
+  }
+  return f
+}
+
+// newvalue = a * value + b.
+const _scoreField = (value, multiplier, adder) => {
+  const v = parseFloat(value)
+  const m = parseFloat(multiplier)
+  const a = parseFloat(adder)
+  if (isNaN(v) || isNaN(m) || isNaN(a)) {
+    return 0.0
+  }
+  return m * v + a
+}
+
+const _scoreTotal = (book, stats) => {
+  const total = _scoreField(book.goodreadsBook.averageRating, stats.goodreadsBook.avgMultiplier, stats.goodreadsBook.avgAdder) +
+    _scoreField(book.goodreadsBook.ratingsCount, stats.goodreadsBook.countMultiplier, stats.goodreadsBook.countAdder) +
+    _scoreField(book.googleBook.averageRating, stats.googleBook.avgMultiplier, stats.googleBook.avgAdder) +
+    _scoreField(book.googleBook.ratingsCount, stats.googleBook.countMultiplier, stats.googleBook.countAdder) +
+    _scoreField(book.idreambook.averageRating, stats.idreambook.avgMultiplier, stats.idreambook.avgAdder) +
+    _scoreField(book.idreambook.ratingsCount, stats.idreambook.countMultiplier, stats.idreambook.countAdder)
+  return total
+}
 
 /**
  * Compare books and return `true` if they are essentially the same book.
  * @param {Object} b1 - book to compare
  * @param {Object} b2 - book to compare
- * @return {boolean} returns true if books match
+ * @return {boolean} returns true if books
  * @private
  */
 const _sameBook = (b1, b2) => {
@@ -91,18 +123,126 @@ function SimilarBooks(props) {
         goodreadsBook: gr,
       })
     }
-    setSimilarBooks(sims)
+    _scoreBooks(sims)
+    const sorted = sortBy(sims, ['score'])
+    sorted.reverse()
+    setSimilarBooks(sorted)
   }
 
-  const _rankBooks = () => {
-    const minMax = {
-      google: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
-      idreambooks: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
-      goodreads: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
-    }
-    for (const v of goodreadsBooks) {
-      if (!isNaN(parseInt(v.averageRating))) {
+  const _statsReducer = (stats, book) => {
+    console.log(stats)
+    _statsTypeReducer(stats.goodreadsBook, book.goodreadsBook)
+    _statsTypeReducer(stats.googleBook, book.googleBook)
+    _statsTypeReducer(stats.idreambook, book.idreambook)
+    return stats
+  }
 
+  const _statsTypeReducer = (stats, book) => {
+    if (book) {
+      let v = _float(book.averageRating)
+      if ( v > stats.maxAvg) {
+        stats.maxAvg = v
+      }
+      if (v < stats.minAvg) {
+        stats.minAvg = v
+      }
+      v = _float(book.ratingsCount)
+      if (v > stats.maxCount) {
+        stats.maxCount = v
+      }
+      if (v < stats.minCount) {
+        stats.minCount = v
+      }
+      if (stats.maxCount !== stats.minCount && stats.maxAvg !== stats.minAvg) {
+        stats.avgMultiplier = (MaxRating - MinRating) / (stats.maxAvg - stats.minAvg)
+        stats.avgAdder = MaxRating - (stats.avgMultiplier * stats.maxAvg)
+
+        stats.countMultiplier = (MaxRating - MinRating) / (stats.maxCount - stats.minCount)
+        stats.countAdder = MaxRating - (stats.countMultiplier * stats.maxCount)
+      }
+    }
+  }
+
+  /**
+   * calculate a relative score for each book
+   * @param {Object[]} books array of similar books
+   * @private
+   * @return {undefined}
+   */
+  const _scoreBooks = (books) => {
+    // first step is to get the min and max values for each "book type"
+    const stats = {
+      googleBook: {
+        minAvg : Number.MAX_SAFE_INTEGER,
+        maxAvg : Number.MIN_SAFE_INTEGER,
+        minCount : Number.MAX_SAFE_INTEGER,
+        maxCount : Number.MIN_SAFE_INTEGER,
+        avgAdder: 0,
+        avgMultiplier: 0,
+        countAdder: 0,
+        countMultiplier: 0,
+      },
+      idreambook: {
+        minAvg : Number.MAX_SAFE_INTEGER,
+        maxAvg : Number.MIN_SAFE_INTEGER,
+        minCount : Number.MAX_SAFE_INTEGER,
+        maxCount : Number.MIN_SAFE_INTEGER,
+        avgAdder: 0,
+        avgMultiplier: 0,
+        countAdder: 0,
+        countMultiplier: 0,
+      },
+      goodreadsBook: {
+        minAvg : Number.MAX_SAFE_INTEGER,
+        maxAvg : Number.MIN_SAFE_INTEGER,
+        minCount : Number.MAX_SAFE_INTEGER,
+        maxCount : Number.MIN_SAFE_INTEGER,
+        avgAdder: 0,
+        avgMultiplier: 0,
+        countAdder: 0,
+        countMultiplier: 0,
+      },
+    }
+
+    // for (const book of books) {
+      // _getStats(book.goodreadsBook, stats.goodreadsBook)
+      // _getStats(book.idreambook, stats.idreambook)
+      // _getStats(book.googleBook, stats.googleBook)
+    // }
+    // get min max, adder, m values for each book type
+    books.reduce(_statsReducer, stats)
+
+
+    // only use a book type in the calculation if there is at least one value in the book type
+    let divisor = 0
+    if (stats.goodreadsBook.maxMultiplier !== 0) {
+      divisor++
+    }
+    if (stats.goodreadsBook.countMultiplier !== 0) {
+      divisor++
+    }
+    if (stats.googleBook.maxMultiplier !== 0) {
+      divisor++
+    }
+    if (stats.googleBook.countMultiplier !== 0) {
+      divisor++
+    }
+    if (stats.idreambook.maxMultiplier !== 0) {
+      divisor++
+    }
+    if (stats.idreambook.countMultiplier !== 0) {
+      divisor++
+    }
+
+    console.log(`divisor ${divisor}`)
+    console.log(stats)
+    // get the score for each book
+    for (const book of books) {
+      // const _scoreTotal = (book, avgMultiplier, avgAdder, countMultiplier, countAvg) =>
+      if (divisor !== 0) {
+        book.score = _scoreTotal(book, stats) / divisor
+      } else {
+        book.score = 0
       }
     }
   }
@@ -141,10 +281,10 @@ function SimilarBooks(props) {
             </thead>
             { similarBooks.length > 0 &&
             <tbody>
-            {similarBooks.map(book => (
+            {similarBooks.map( (book,idx) => (
               <tr key={book.count}>
-                <td>{book.count}</td>
-                <td><span className="comp-score">?</span></td>
+                <td>{idx}</td>
+                <td><span className="comp-score">{Math.ceil(book.score)}</span></td>
                 <td className="book-info">
                   <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
                   <div>
