@@ -12,5 +12,18 @@ class GoodreadsService {
       return res.data
     })
   }
+
+  /**
+   * Get GR book for id
+   * @param {string} id - goodreads id
+   * @return {Promise<AxiosResponse<any>>} goodreads book
+   */
+  getBookById(id) {
+    const url = `${process.env.API_URI}/goodreads/gid/${id}`
+    return axios.get(url)
+    .then(res => {
+      return res.data
+    })
+  }
 }
 export default new GoodreadsService()

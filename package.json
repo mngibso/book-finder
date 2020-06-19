@@ -8,7 +8,8 @@
   "version": "0.0.1",
   "description": "Book recommendation engine",
   "dependencies": {
-    "aws-sdk": "^2.686.0",
+    "amazon-paapi": "^1.0.1",
+    "aws-sdk": "^2.695.0",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
@@ -70,6 +71,7 @@
   },
   "scripts": {
     "start": "concurrently \"npm run wds\" \"npm run server\"",
+    "start:client": "npm run wds",
     "wds": "./node_modules/.bin/webpack-dev-server --open --hot",
     "docker": "docker-compose up",
     "server": "nodemon --watch server server/index.js",

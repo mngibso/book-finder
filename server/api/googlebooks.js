@@ -27,8 +27,8 @@ const _getISBN13 = (book) => {
  */
 const _toBook = (book) => {
   return {
-    averageRating: get(book, 'volumeInfo.averageRating',''),
-    ratingsCount: get(book, 'volumeInfo.ratingsCount',''),
+    averageRating: get(book, 'volumeInfo.averageRating','N/A'),
+    ratingsCount: get(book, 'volumeInfo.ratingsCount','N/A'),
     title:  get(book, 'volumeInfo.title',''),
     isbn13:  _getISBN13(book),
     authors:  get(book, 'volumeInfo.authors',[]),

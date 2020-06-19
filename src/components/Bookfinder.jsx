@@ -11,6 +11,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import '../Routes/Bookfinder/bookfinder.css';
 import GoodreadsService from '../Services/goodreads-service'
 import GooglebooksService from '../Services/googlebooks-service'
+import IdreambooksService from '../Services/idreambooks-service'
 import SimilarBooks from './SimilarBooks.jsx'
 
 
@@ -28,29 +29,55 @@ const _sameBook = (b1, b2) => {
 
 // find books similar to the book selected
 function Bookfinder() {
+  const [googleBooksQueries, setGoogleBooksQueries] = useState({})
   const [bookTitle, setBookTitle] = useState("");
   const [selectBooks, setSelectBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
   const [goodreadsBooks, setGoodreadsBooks] = useState([]);
   const [goodreadsLoading, setGoodreadsLoading] = useState(false);
+  // const [idreambooks, setIdreambooksLoading] = useState(false);
+  const [idreambooks, setIdreambooks] = useState([]);
   const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
 
   // When we obtain goodreadsBooks, get ratings for googlebooks
   useEffect(() => {
-    const promises = goodreadsBooks.filter( bk1 => {
-      return googleBooks.findIndex( (bk2) => {
-        return _sameBook(bk1, bk2)
-      }) === -1
-    })
-    .map( b => {
+    let mounted = true
+    console.log(`useEffect ${goodreadsBooks.length}  ${googleBooks.length} ${idreambooks.length}`)
+    console.log(`GoogleBooks ${googleBooks.length}`)
+    goodreadsBooks.filter( bk1 => !googleBooksQueries[bk1.title] )
+    .forEach( b => {
+      console.log(`useEffect ${b.title}`)
+      googleBooksQueries[b.title] = true
+      setGoogleBooksQueries(googleBooksQueries)
       const author = (b.authors || []).join(" ")
-      return GooglebooksService.getBookByTitle(b.title, author)
+      getGooglebooksRatings(b.title, author)
+      .then( resp => {
+        console.log(`useEffect googlebooks ${b.title}`)
+        if (!mounted || !resp) return
+        //googleBooks.push(resp)
+        //setGoogleBooks([...googleBooks])
+        setGoogleBooks( googleBooks => [...googleBooks, resp])
+      })
+      getIdreambooksReview(b.title)
+      .then( resp => {
+        console.log(idreambooks.length)
+        console.log(`useEffect idreambooks ${b.title}`)
+        if (!mounted || !resp) return
+        const idb = idreambooks
+        // idb.push(resp)
+        console.log(idb)
+        // setState(state => ({ ...state, a: props.a }));
+        setIdreambooks( idreambooks => [...idreambooks, resp])
+      })
     })
-    Promise.all(promises)
-    .then(( gglBooks ) => {
-      setGoogleBooks(gglBooks.filter(b => b.title))
-    })
+
+    /*
+    return () => {
+      console.log('UNMOUNT')
+      mounted = false;
+    }
+     */
   },[goodreadsBooks]);
 
   /**
@@ -61,11 +88,15 @@ function Bookfinder() {
   const _reset = () => {
     setSelectedBook(null)
     setSelectBooks([])
+    setGoogleBooksQueries({})
     setGoodreadsBooks([])
     setGoogleBooks([])
+    setIdreambooks([])
     setGoodreadsLoading(false)
+    // setIdreambooksLoading(false)
     setFindLoading(false)
   }
+
   /**
    * search books with given title
    * @param {Object} evt - the click event
@@ -81,6 +112,25 @@ function Bookfinder() {
     .finally(() => setFindLoading(false))
   }
 
+  const getGooglebooksRatings = (title, author) => {
+    console.log(`getGooglebooksRatings ${title}`)
+    return GooglebooksService.getBookByTitle(title, author)
+  }
+
+  const getIdreambooksReview = title => {
+    console.log(`getIdreambooksRatings ${title}`)
+    return IdreambooksService.getBookByTitle(title)
+  }
+
+  const getGoodreadsRatings = books => {
+    for (const book of books) {
+      GoodreadsService.getBookById(book.id)
+      .then( (resp) => {
+        setGoodreadsBooks( goodreadsBooks => [...goodreadsBooks, resp.book])
+      })
+    }
+  }
+
   // Get books similar to 'title' from goodreads api
   const getSimilarBooksGoodreads = (title) => {
     setGoodreadsLoading(true)
@@ -88,15 +138,37 @@ function Bookfinder() {
     GoodreadsService.getSimilars(title)
       .then((data) => {
         const books = data.similars
+        getGoodreadsRatings(books)
+        // get ratings for each similar
         // add the book we're search for to the similars list
         data.book.selected = true
-        books.push(data.book)
-        setGoodreadsBooks(books)
+        //books.push(data.book)
+        setGoodreadsBooks([data.book])
       })
     .finally( () => {
       setGoodreadsLoading(false)
     })
   }
+
+  // Get books similar to 'title' from amazon api
+  /*
+  const getSimilarBooksIdreambooks = (title) => {
+    //setIdreamBooksLoading(true)
+    setIdreambooksBooks([])
+    IdreambooksService.getSimilars(title)
+    .then((data) => {
+      const books = data.similars
+      // add the book we're search for to the similars list
+      data.book.selected = true
+      books.push(data.book)
+      setGoodreadsBooks(books)
+    })
+    .finally( () => {
+      setGoodreadsLoading(false)
+    })
+  }
+
+   */
 
   // Book is selected to find similars for
   const selectBook = (evt) => {
@@ -109,6 +181,7 @@ function Bookfinder() {
     setSelectBooks(selectBooks.filter(b => b.isbn13 === isbn13))
     // get goodreads
     getSimilarBooksGoodreads(selectedBook.title)
+    //getDreambooks(selectedBook.title)
     // ToDo: get amazon -
   }
 
@@ -204,11 +277,7 @@ function Bookfinder() {
         </Card>
       </div>
       }
-        <div className="comparison-report">
-        </div>
-        <div>
-          <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks}></SimilarBooks>
-        </div>
+      <SimilarBooks goodreadsBooks={goodreadsBooks} googleBooks={googleBooks} idreambooks={idreambooks}></SimilarBooks>
 </Container>
   );
 }

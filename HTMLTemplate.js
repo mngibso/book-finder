@@ -10,6 +10,7 @@ export default function (templateConfig) {
 
                 <!-- Google Fonts -->
                 <link href="https://fonts.googleapis.com/css?family=Lato:300,400" rel="stylesheet preload">
+                <link href="https://fonts.googleapis.com/css2?family=Bellota:wght@700&display=swap" rel="stylesheet">
                 
                 <link rel="shortcut icon" href="/favicon.ico">
                 <meta charset="UTF-8" />

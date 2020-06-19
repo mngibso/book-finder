@@ -151,21 +151,25 @@ const _getSimilarBooks = (url, res) => {
   return function() {
     const d = Date.now()
     let book
-  axios.get(url)
+    axios.get(url)
     .then(gRes => {
       const json = JSON.parse(convert.xml2json(gRes.data, {compact: true}))
       // res.json(json)
-      const sims = _toSimilars(get(json,'GoodreadsResponse.book.similar_books.book',[]))
+      const similars = _toSimilars(get(json,'GoodreadsResponse.book.similar_books.book',[]))
       book = _toBook(get(json, 'GoodreadsResponse.book', {}))
-      const similarPromises = sims.filter(b => b.id).map( b => _getBook(_getIdUrl(b.id)))
-      return Promise.all(similarPromises)
+      // const similarPromises = sims.filter(b => b.id).map( b => _getBook(_getIdUrl(b.id)))
+      // return Promise.all(similarPromises)
+      res.json( {
+        book,
+        similars
       })
-      .then(similars => {
-        res.json( {
-          book,
-          similars
-        })
-      })
+    })
+    // .then(similars => {
+      // res.json( {
+        // book,
+        // similars
+      // })
+    // })
     .catch(e => {
       console.error(e)
       return res.status(500).json(`Error: ${e.message || e}`);
@@ -223,6 +227,23 @@ router.route('/title/:title').get((req, res) => {
   }
   const fn = _getSimilarBooks(url,res)
   _throttleCall(fn)
+});
+
+// Get similar books to title book
+router.route('/gid/:id').get((req, res) => {
+  const id = req.params.id
+  let url
+  try {
+    url = _getIdUrl(id)
+  } catch (e) {
+    return res.status(500).json('Error: required "GOODREADS_API_KEY" not defined in env');
+  }
+  _getBook(url)
+  .then(book => {
+    return res.json( {
+      book
+    })
+  })
 });
 
 module.exports = router

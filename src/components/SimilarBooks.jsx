@@ -16,8 +16,19 @@ const _sameBook = (b1, b2) => {
   if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
     return true
   }
-  const a1 = get(b1, 'authors', []).sort()
-  const a2 = get(b2, 'authors', []).sort()
+  if (!b1.title || !b2.title) {
+    return false
+  }
+  const a1 = get(b1, 'authors', [])
+  .map( auth => {
+    return auth.split(' ')
+    .join('')
+  }).sort().join(':').toLowerCase()
+  const a2 = get(b2, 'authors', [])
+  .map( auth => {
+    return auth.split(' ')
+    .join('')
+  }).sort().join(':').toLowerCase()
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   let titlesMatch
@@ -26,7 +37,8 @@ const _sameBook = (b1, b2) => {
   } else {
     titlesMatch = b2Title.includes(b1Title)
   }
-  return titlesMatch && a1.join(':') === a2.join(':')
+  //return titlesMatch && a1.join(':') === a2.join(':')
+  return titlesMatch && a1 === a2
 }
 
 
@@ -37,18 +49,18 @@ const _sameBook = (b1, b2) => {
  * @constructor
  */
 function SimilarBooks(props) {
-  const {goodreadsBooks = [], googleBooks = [], amazonBooks = []} = props
+  const {goodreadsBooks = [], googleBooks = [], idreambooks = []} = props
   const [similarBooks, setSimilarBooks] = useState([]);
 
   // merge incoming books arrays
   useEffect(() => {
-    // if (amazonBooks.length || goodreadsBooks.length || googleBooks.length) { _merge() }
-    if (goodreadsBooks.length || googleBooks.length) {
+    console.log(`merge  ${goodreadsBooks.length} ${googleBooks.length} ${idreambooks.length}`)
+    if (goodreadsBooks.length || googleBooks.length || idreambooks.length) {
       _merge()
     } else {
       setSimilarBooks([])
     }
-  },[goodreadsBooks, googleBooks]);
+  },[goodreadsBooks, googleBooks, idreambooks]);
 
   // given the books arrays, merge them as best as possible to give ratings in table
   const _merge = () => {
@@ -58,10 +70,10 @@ function SimilarBooks(props) {
       count++
       const googleBook = find(googleBooks, gb => {
         return _sameBook(gb, gr)
-      }) || { averageRating: 'N/A', ratingsCount: 'N/A'}
-      const amazonBook = find(amazonBooks, ab => {
-        return _sameBook(ab, gr)
-      }) || { salesRank: 'TBD'}
+      }) || {averageRating: 'N/A', ratingsCount: 'N/A'}
+      const idreambook = find(idreambooks, ib => {
+        return _sameBook(ib, gr)
+      }) || {averageRating: '0', ratingsCount: '0'}
       let title = gr.title
       if (gr.subTitle) {
         title = `${title} : ${gr.subTitle}`
@@ -72,20 +84,21 @@ function SimilarBooks(props) {
         title,
         isbn13: gr.isbn13,
         googleBook,
-        amazonBook,
+        idreambook,
         goodreadsBook: gr,
       })
     }
     setSimilarBooks(sims)
   }
   return (
-    <Container>
-      { similarBooks.length > 0 &&
+    <div className="container-fluid" style={similarBooks.length > 0 ? {} : {display: "none"}} >
       <Card className="mb-3">
         <div className="card-body">
           <table className="dataTable book-comparison-table">
             <colgroup>
-              <col className="amazon"/>
+              <col span="2" className="goodreads"/>
+              <col/>
+              <col span="2" />
               <col span="2" className="goodreads"/>
               <col className="google"/>
               <col className="google last"/>
@@ -95,18 +108,21 @@ function SimilarBooks(props) {
               <th rowSpan="2">Rank</th>
               <th rowSpan="2">Comp Score</th>
               <th rowSpan="2" className="book-info">Title</th>
-              <th><img src="images/logo_amazon.png" alt="Logo: Amazon" className="th-logo"/></th>
+              <th colSpan="2"><img src="images/idreambooks-logo.png" alt="Logo: Idreambooks" className="th-logo"/>
+                <div className="idreambooks">iDreamBooks : Book Reviews from Critics</div></th>
               <th colSpan="2"><img src="images/logo_goodreads2.png" alt="Logo: GoodReads" className="th-logo"/></th>
               <th colSpan="2"><img src="images/logo_google.png" alt="Logo: Google" className="th-logo"/></th>
             </tr>
             <tr>
-              <th>Sales Rank</th>
+              <th>Reviews</th>
+              <th>Average Score</th>
               <th>Ratings Count</th>
               <th>Avg. Rating</th>
               <th>Ratings Count</th>
               <th>Avg. Rating</th>
             </tr>
             </thead>
+            { similarBooks.length > 0 &&
             <tbody>
             {similarBooks.map(book => (
               <tr key={book.count}>
@@ -115,23 +131,25 @@ function SimilarBooks(props) {
                 <td className="book-info">
                   <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
                   <div>
-                    <strong>{book.title}</strong>
+                    <strong>{book.title.split('(')[0]}</strong>
                     {book.authors}
                   </div>
                 </td>
-                <td>{book.amazonBook.salesRank}</td>
-                <td>{book.goodreadsBook.ratingsCount}</td>
+                <td>{book.idreambook.ratingsCount}</td>
+                <td>{parseInt(book.idreambook.averageRating) === 0 ? "N/A" : `${book.idreambook.averageRating}/100`}</td>
+                <td>{parseInt(book.goodreadsBook.ratingsCount).toLocaleString()}</td>
                 <td>{book.goodreadsBook.averageRating}</td>
-                <td>{book.googleBook.ratingsCount}</td>
+                <td>{isNaN(parseInt(book.googleBook.ratingsCount)) ?
+                  book.googleBook.ratingsCount : parseInt(book.googleBook.ratingsCount).toLocaleString()}</td>
                 <td>{book.googleBook.averageRating}</td>
               </tr>
             ))}
             </tbody>
+            }
           </table>
         </div>
       </Card>
-      }
-    </Container>
+    </div>
   );
 }
 export default SimilarBooks;
