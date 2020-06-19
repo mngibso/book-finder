@@ -26,6 +26,9 @@ const _sameBook = (b1, b2) => {
   }).sort().join(':').toLowerCase()
   const a2 = get(b2, 'authors', [])
   .map( auth => {
+    if (!auth) {
+      return ''
+    }
     return auth.split(' ')
     .join('')
   }).sort().join(':').toLowerCase()
@@ -90,6 +93,20 @@ function SimilarBooks(props) {
     }
     setSimilarBooks(sims)
   }
+
+  const _rankBooks = () => {
+    const minMax = {
+      google: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
+      idreambooks: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
+      goodreads: { min : Number.MAX_SAFE_INTEGER, max : Number.MIN_SAFE_INTEGER },
+    }
+    for (const v of goodreadsBooks) {
+      if (!isNaN(parseInt(v.averageRating))) {
+
+      }
+    }
+  }
+
   return (
     <div className="container-fluid" style={similarBooks.length > 0 ? {} : {display: "none"}} >
       <Card className="mb-3">
