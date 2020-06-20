@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 import '../Routes/Bookfinder/bookfinder.css';
 
 const MaxRating = 100
-const MinRating = 0
+const MinRating = 5
 
 const _float = value => {
   const f = parseFloat(value)
@@ -28,13 +28,14 @@ const _scoreField = (value, multiplier, adder) => {
 }
 
 // calculate total score for book
+const Weight = 1
 const _scoreTotal = (book, stats) => {
   const total = _scoreField(book.goodreadsBook.averageRating, stats.goodreadsBook.avgMultiplier, stats.goodreadsBook.avgAdder) +
     _scoreField(book.goodreadsBook.ratingsCount, stats.goodreadsBook.countMultiplier, stats.goodreadsBook.countAdder) +
-    _scoreField(book.googleBook.averageRating, stats.googleBook.avgMultiplier, stats.googleBook.avgAdder) +
-    _scoreField(book.googleBook.ratingsCount, stats.googleBook.countMultiplier, stats.googleBook.countAdder) +
-    (_scoreField(book.idreambook.averageRating, stats.idreambook.avgMultiplier, stats.idreambook.avgAdder) * 0.5)  +
-    (_scoreField(book.idreambook.ratingsCount, stats.idreambook.countMultiplier, stats.idreambook.countAdder) * 0.5)
+    _scoreField(book.googleBook.averageRating, stats.googleBook.avgMultiplier, stats.googleBook.avgAdder) * Weight +
+    _scoreField(book.googleBook.ratingsCount, stats.googleBook.countMultiplier, stats.googleBook.countAdder) * Weight +
+    _scoreField(book.idreambook.averageRating, stats.idreambook.avgMultiplier, stats.idreambook.avgAdder)   * Weight +
+    _scoreField(book.idreambook.ratingsCount, stats.idreambook.countMultiplier, stats.idreambook.countAdder) * Weight
   return total
 }
 
@@ -52,31 +53,28 @@ const _sameBook = (b1, b2) => {
   if (!b1.title || !b2.title) {
     return false
   }
-  let a1 = get(b1, 'authors', [])
-  if (!Array.isArray(a1)) {
-    a1 = [a1]
-  }
-  let a2 = get(b2, 'authors', [])
-  if (!Array.isArray(a2)) {
-    a2 = [a2]
-  }
+  let a1 = ''
+  let a2 = ''
 
-  a1.map( auth => {
-    if (!auth) {
-      return ''
-    }
-    return auth.split(' ')
-    .join('')
-  }).sort().join(':').toLowerCase()
+  try {
+    a1 = get(b1, 'authors', [])
+    .map( auth => {
+      return auth.split(' ')
+      .join('')
+    }).sort().join(':').toLowerCase()
+  } catch(e) {}
 
-  a2.map( auth => {
-    if (!auth) {
-      return ''
-    }
-    return auth.split(' ')
-    .join('')
-  }).sort().join(':').toLowerCase()
-
+  try {
+    a2 = get(b2, 'authors', [])
+    .map( auth => {
+      if (!auth) {
+        return ''
+      }
+      return auth.split(' ')
+      .join('')
+    }).sort().join(':').toLowerCase()
+  } catch (e) {}
+  const authorsMatch = a1 && a2 ? a1 === a2 : true
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   let titlesMatch
@@ -85,8 +83,7 @@ const _sameBook = (b1, b2) => {
   } else {
     titlesMatch = b2Title.includes(b1Title)
   }
-  //return titlesMatch && a1.join(':') === a2.join(':')
-  return titlesMatch && a1 === a2
+  return titlesMatch && authorsMatch
 }
 
 
@@ -267,7 +264,7 @@ function SimilarBooks(props) {
             <thead>
             <tr>
               <th rowSpan="2">Rank</th>
-              <th rowSpan="2">Comp Score</th>
+              <th rowSpan="2">Score</th>
               <th rowSpan="2" className="book-info">Title</th>
               <th colSpan="2"><img src="images/idreambooks-logo.png" alt="Logo: Idreambooks" className="th-logo"/>
                 <div className="idreambooks">iDreamBooks : Book Reviews from Critics</div></th>
@@ -287,7 +284,7 @@ function SimilarBooks(props) {
             <tbody>
             {similarBooks.map( (book,idx) => (
               <tr key={book.count}>
-                <td>{idx}</td>
+                <td>{idx+1}</td>
                 <td><span className="comp-score">{Math.ceil(book.score)}</span></td>
                 <td className="book-info">
                   <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
