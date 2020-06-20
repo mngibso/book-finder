@@ -31,6 +31,7 @@
     "react": "^16.2.0",
     "react-bootstrap": "^1.0.1",
     "react-dom": "^16.2.0",
+    "react-flip-move": "^3.0.4",
     "react-redux": "^7.2.0",
     "react-router-dom": "^4.2.2",
     "xml-js": "^1.6.11"
@@ -74,7 +75,7 @@
     "start:client": "npm run wds",
     "wds": "./node_modules/.bin/webpack-dev-server --open --hot",
     "docker": "docker-compose up",
-    "server": "nodemon --watch server server/index.js",
+    "server": "nodemon --tls-min-v1.0 --watch server server/index.js",
     "build:dev": "./node_modules/.bin/webpack",
     "build:prod": "./node_modules/.bin/webpack --mode=production",
     "build:watch": "./node_modules/.bin/webpack -w",
