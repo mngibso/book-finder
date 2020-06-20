@@ -16,7 +16,7 @@ const _float = value => {
   return f
 }
 
-// newvalue = a * value + b.
+// newvalue = multiplier * value + adder.
 const _scoreField = (value, multiplier, adder) => {
   const v = parseFloat(value)
   const m = parseFloat(multiplier)
@@ -27,13 +27,14 @@ const _scoreField = (value, multiplier, adder) => {
   return m * v + a
 }
 
+// calculate total score for book
 const _scoreTotal = (book, stats) => {
   const total = _scoreField(book.goodreadsBook.averageRating, stats.goodreadsBook.avgMultiplier, stats.goodreadsBook.avgAdder) +
     _scoreField(book.goodreadsBook.ratingsCount, stats.goodreadsBook.countMultiplier, stats.goodreadsBook.countAdder) +
     _scoreField(book.googleBook.averageRating, stats.googleBook.avgMultiplier, stats.googleBook.avgAdder) +
     _scoreField(book.googleBook.ratingsCount, stats.googleBook.countMultiplier, stats.googleBook.countAdder) +
-    _scoreField(book.idreambook.averageRating, stats.idreambook.avgMultiplier, stats.idreambook.avgAdder) +
-    _scoreField(book.idreambook.ratingsCount, stats.idreambook.countMultiplier, stats.idreambook.countAdder)
+    (_scoreField(book.idreambook.averageRating, stats.idreambook.avgMultiplier, stats.idreambook.avgAdder) * 0.5)  +
+    (_scoreField(book.idreambook.ratingsCount, stats.idreambook.countMultiplier, stats.idreambook.countAdder) * 0.5)
   return total
 }
 
@@ -51,19 +52,31 @@ const _sameBook = (b1, b2) => {
   if (!b1.title || !b2.title) {
     return false
   }
-  const a1 = get(b1, 'authors', [])
-  .map( auth => {
-    return auth.split(' ')
-    .join('')
-  }).sort().join(':').toLowerCase()
-  const a2 = get(b2, 'authors', [])
-  .map( auth => {
+  let a1 = get(b1, 'authors', [])
+  if (!Array.isArray(a1)) {
+    a1 = [a1]
+  }
+  let a2 = get(b2, 'authors', [])
+  if (!Array.isArray(a2)) {
+    a2 = [a2]
+  }
+
+  a1.map( auth => {
     if (!auth) {
       return ''
     }
     return auth.split(' ')
     .join('')
   }).sort().join(':').toLowerCase()
+
+  a2.map( auth => {
+    if (!auth) {
+      return ''
+    }
+    return auth.split(' ')
+    .join('')
+  }).sort().join(':').toLowerCase()
+
   const b1Title = b1.title.toLowerCase().split('(')[0].trim()
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   let titlesMatch
@@ -89,7 +102,6 @@ function SimilarBooks(props) {
 
   // merge incoming books arrays
   useEffect(() => {
-    console.log(`merge  ${goodreadsBooks.length} ${googleBooks.length} ${idreambooks.length}`)
     if (goodreadsBooks.length || googleBooks.length || idreambooks.length) {
       _merge()
     } else {
@@ -129,14 +141,15 @@ function SimilarBooks(props) {
     setSimilarBooks(sorted)
   }
 
+  // calculate book stats to obtain score
   const _statsReducer = (stats, book) => {
-    console.log(stats)
     _statsTypeReducer(stats.goodreadsBook, book.goodreadsBook)
     _statsTypeReducer(stats.googleBook, book.googleBook)
     _statsTypeReducer(stats.idreambook, book.idreambook)
     return stats
   }
 
+  // set stats for each book type
   const _statsTypeReducer = (stats, book) => {
     if (book) {
       let v = _float(book.averageRating)
@@ -204,14 +217,8 @@ function SimilarBooks(props) {
       },
     }
 
-    // for (const book of books) {
-      // _getStats(book.goodreadsBook, stats.goodreadsBook)
-      // _getStats(book.idreambook, stats.idreambook)
-      // _getStats(book.googleBook, stats.googleBook)
-    // }
-    // get min max, adder, m values for each book type
+    // set values in stats
     books.reduce(_statsReducer, stats)
-
 
     // only use a book type in the calculation if there is at least one value in the book type
     let divisor = 0
@@ -234,11 +241,8 @@ function SimilarBooks(props) {
       divisor++
     }
 
-    console.log(`divisor ${divisor}`)
-    console.log(stats)
-    // get the score for each book
+    // set the score for each book
     for (const book of books) {
-      // const _scoreTotal = (book, avgMultiplier, avgAdder, countMultiplier, countAvg) =>
       if (divisor !== 0) {
         book.score = _scoreTotal(book, stats) / divisor
       } else {

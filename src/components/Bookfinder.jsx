@@ -15,6 +15,7 @@ import IdreambooksService from '../Services/idreambooks-service'
 import SimilarBooks from './SimilarBooks.jsx'
 
 
+/*
 // return `true` if b1 and b2 are effectively the same book
 const _sameBook = (b1, b2) => {
   if (b1.isbn13 && b1.isbn13 === b2.isbn13) {
@@ -26,8 +27,13 @@ const _sameBook = (b1, b2) => {
   const b2Title = b2.title.toLowerCase().split('(')[0].trim()
   return b1Title === b2Title && a1.join(':') === a2.join(':')
 }
+*/
 
-// find books similar to the book selected
+/**
+ * display form for user to select book
+ * @return {*} html to render
+ * @constructor
+ */
 function Bookfinder() {
   const [googleBooksQueries, setGoogleBooksQueries] = useState({})
   const [bookTitle, setBookTitle] = useState("");
@@ -35,49 +41,29 @@ function Bookfinder() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [goodreadsBooks, setGoodreadsBooks] = useState([]);
   const [goodreadsLoading, setGoodreadsLoading] = useState(false);
-  // const [idreambooks, setIdreambooksLoading] = useState(false);
   const [idreambooks, setIdreambooks] = useState([]);
   const [googleBooks, setGoogleBooks] = useState([]);
   const [findLoading, setFindLoading] = useState(false);
 
-  // When we obtain goodreadsBooks, get ratings for googlebooks
+  // get google books and idreambooks when we add  goodreadsBooks
   useEffect(() => {
     let mounted = true
-    console.log(`useEffect ${goodreadsBooks.length}  ${googleBooks.length} ${idreambooks.length}`)
-    console.log(`GoogleBooks ${googleBooks.length}`)
     goodreadsBooks.filter( bk1 => !googleBooksQueries[bk1.title] )
     .forEach( b => {
-      console.log(`useEffect ${b.title}`)
       googleBooksQueries[b.title] = true
       setGoogleBooksQueries(googleBooksQueries)
       const author = (b.authors || []).join(" ")
       getGooglebooksRatings(b.title, author)
       .then( resp => {
-        console.log(`useEffect googlebooks ${b.title}`)
         if (!mounted || !resp) return
-        //googleBooks.push(resp)
-        //setGoogleBooks([...googleBooks])
         setGoogleBooks( googleBooks => [...googleBooks, resp])
       })
       getIdreambooksReview(b.title)
       .then( resp => {
-        console.log(idreambooks.length)
-        console.log(`useEffect idreambooks ${b.title}`)
         if (!mounted || !resp) return
-        const idb = idreambooks
-        // idb.push(resp)
-        console.log(idb)
-        // setState(state => ({ ...state, a: props.a }));
         setIdreambooks( idreambooks => [...idreambooks, resp])
       })
     })
-
-    /*
-    return () => {
-      console.log('UNMOUNT')
-      mounted = false;
-    }
-     */
   },[goodreadsBooks]);
 
   /**
@@ -93,7 +79,6 @@ function Bookfinder() {
     setGoogleBooks([])
     setIdreambooks([])
     setGoodreadsLoading(false)
-    // setIdreambooksLoading(false)
     setFindLoading(false)
   }
 
@@ -113,12 +98,10 @@ function Bookfinder() {
   }
 
   const getGooglebooksRatings = (title, author) => {
-    console.log(`getGooglebooksRatings ${title}`)
     return GooglebooksService.getBookByTitle(title, author)
   }
 
   const getIdreambooksReview = title => {
-    console.log(`getIdreambooksRatings ${title}`)
     return IdreambooksService.getBookByTitle(title)
   }
 
@@ -150,26 +133,6 @@ function Bookfinder() {
     })
   }
 
-  // Get books similar to 'title' from amazon api
-  /*
-  const getSimilarBooksIdreambooks = (title) => {
-    //setIdreamBooksLoading(true)
-    setIdreambooksBooks([])
-    IdreambooksService.getSimilars(title)
-    .then((data) => {
-      const books = data.similars
-      // add the book we're search for to the similars list
-      data.book.selected = true
-      books.push(data.book)
-      setGoodreadsBooks(books)
-    })
-    .finally( () => {
-      setGoodreadsLoading(false)
-    })
-  }
-
-   */
-
   // Book is selected to find similars for
   const selectBook = (evt) => {
     const isbn13 = get(evt, 'currentTarget.dataset.rbEventKey', null)
@@ -179,29 +142,7 @@ function Bookfinder() {
     }
     // Only show the selected book
     setSelectBooks(selectBooks.filter(b => b.isbn13 === isbn13))
-    // get goodreads
     getSimilarBooksGoodreads(selectedBook.title)
-    //getDreambooks(selectedBook.title)
-    // ToDo: get amazon -
-  }
-
-  let selectedBookItem
-  if (selectedBook) {
-    selectedBookItem =
-      <div className="selected-book">
-        <img className="book-cover" src={selectedBook.thumbnail}/>
-        <div>
-          <div className="book-title">{selectedBook.title}</div>
-          <div className="author">{selectedBook.authors}</div>
-        </div>
-        <Spinner
-          as="span"
-          animation="grow"
-          size="sm"
-          role="status"
-          aria-hidden="true"
-        />Searching...
-      </div>
   }
 
   let goodreadsSpinner
