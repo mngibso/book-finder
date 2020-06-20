@@ -4,6 +4,7 @@ import sortBy from 'lodash/sortBy'
 import find from 'lodash/find'
 import Card from 'react-bootstrap/Card';
 import '../Routes/Bookfinder/bookfinder.css';
+import FlipMove from 'react-flip-move';
 
 const MaxRating = 100
 const MinRating = 5
@@ -252,7 +253,12 @@ function SimilarBooks(props) {
     <div className="container-fluid" style={similarBooks.length > 0 ? {} : {display: "none"}} >
       <Card className="mb-3">
         <div className="card-body">
-          <table className="dataTable book-comparison-table">
+          <FlipMove
+            typeName='table'
+            className='dataTable book-comparison-table'
+            enterAnimation='fade'
+            leaveAnimation='fade'
+          >
             <colgroup>
               <col span="2" className="goodreads"/>
               <col/>
@@ -261,7 +267,6 @@ function SimilarBooks(props) {
               <col className="google"/>
               <col className="google last"/>
             </colgroup>
-            <thead>
             <tr>
               <th rowSpan="2">Rank</th>
               <th rowSpan="2">Score</th>
@@ -279,10 +284,7 @@ function SimilarBooks(props) {
               <th>Ratings Count</th>
               <th>Avg. Rating</th>
             </tr>
-            </thead>
-            { similarBooks.length > 0 &&
-            <tbody>
-            {similarBooks.map( (book,idx) => (
+            { similarBooks.length > 0 && similarBooks.map( (book,idx) => (
               <tr key={book.count}>
                 <td>{idx+1}</td>
                 <td><span className="comp-score">{Math.ceil(book.score)}</span></td>
@@ -302,9 +304,7 @@ function SimilarBooks(props) {
                 <td>{book.googleBook.averageRating}</td>
               </tr>
             ))}
-            </tbody>
-            }
-          </table>
+          </FlipMove>
         </div>
       </Card>
     </div>
