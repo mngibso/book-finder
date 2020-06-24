@@ -34,6 +34,7 @@ const _toBook = (book) => {
     authors:  get(book, 'volumeInfo.authors',[]),
     link:  get(book, 'volumeInfo.infoLink',''),
     thumbnail:  get(book, 'volumeInfo.imageLinks.smallThumbnail',''),
+    description:  get(book, 'volumeInfo.description',''),
   }
 }
 
