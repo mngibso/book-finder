@@ -131,6 +131,7 @@ function SimilarBooks(props) {
         googleBook,
         idreambook,
         goodreadsBook: gr,
+        amazonLink: `https://www.amazon.com/s/ref=as_li_ss_tl?i=stripbooks&rh=p_27:${encodeURIComponent(gr.authors.join(','))},p_28:${encodeURIComponent(title)},p_n_feature_browse-bin:618083011&s=relevanceexprank&unfiltered=1&ref=sr_adv_b&tag=bookfinder03-20`
       })
     }
     _scoreBooks(sims)
@@ -289,7 +290,10 @@ function SimilarBooks(props) {
                 <td>{idx+1}</td>
                 <td><span className="comp-score">{Math.ceil(book.score)}</span></td>
                 <td className="book-info">
-                  <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail}/>
+                  <div className="title">
+                  <img src={book.googleBook.thumbnail || book.goodreadsBook.thumbnail} alt={book.title}/>
+                    <span className="caption"><a target="_blank" href={book.amazonLink} title="buy">Amazon</a></span>
+                  </div>
                   <div>
                     <strong>{book.title.split('(')[0]}</strong>
                     {book.authors}

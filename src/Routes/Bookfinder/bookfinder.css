@@ -86,7 +86,22 @@ table.dataTable.book-comparison-table thead th[rowspan='2'].sorting_desc_disable
 
 table.dataTable.book-comparison-table th.book-info,
 table.dataTable.book-comparison-table td.book-info  { text-align: left; }
-table.dataTable.book-comparison-table td.book-info img { margin-right: 10px; width: 50px; border-radius: 3px; float: left; }
+table.dataTable.book-comparison-table td.book-info img {
+	margin-right: 10px;
+	width: 50px;
+	border-radius: 3px;
+}
+table.dataTable.book-comparison-table td.book-info > div.title {
+	vertical-align: top;
+	display: inline-block;
+	text-align: center;
+	float: left;
+}
+table.dataTable.book-comparison-table td.book-info > div .caption {
+	display: block;
+	font-size: 14px;
+	width: 50px;
+}
 /* table.dataTable.book-comparison-table td.book-info > div { width: 200px; } */
 table.dataTable.book-comparison-table td.book-info > div > strong { display: block; color: #fd3100 }
 
